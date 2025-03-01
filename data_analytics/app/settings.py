@@ -14,6 +14,7 @@ class EnvironmentEnum(IntEnum):
     Dev is for *local* development op application.
     Testing when running any type of automated test
     """
+
     production = 1
     local = 2
     testing = 3
@@ -41,7 +42,9 @@ def set_db_url(environment: EnvironmentEnum) -> str:
 
     # If environment is testing local testing, return test url
     if environment.value == environment.testing.value:
-        return "postgresql+asyncpg://postgres:password@localhost:5432/ingeniumuahub_test"
+        return (
+            "postgresql+asyncpg://postgres:password@localhost:5432/ingeniumuahub_test"
+        )
 
     # By default assume runtime in local python interpreter, connect via localhost to dev db
     return "postgresql+asyncpg://dev-user:password@localhost:5432/dev_db"
@@ -63,14 +66,20 @@ class Settings(BaseModel):
     keycloak_realm: str
 
     def is_debug(self) -> bool:
-        return self.running_environment.name in [EnvironmentEnum.local.name, EnvironmentEnum.testing.name]
+        return self.running_environment.name in [
+            EnvironmentEnum.local.name,
+            EnvironmentEnum.testing.name,
+        ]
 
     @classmethod
-    def deduce_settings(cls) -> 'Settings':
+    def deduce_settings(cls) -> "Settings":
         return Settings(
             running_environment=(environment := set_environment()),
             database_url=set_db_url(environment),
-            echo_sql=True if environment.value in [EnvironmentEnum.local.value, EnvironmentEnum.testing.value] else False,
+            echo_sql=True
+            if environment.value
+            in [EnvironmentEnum.local.value, EnvironmentEnum.testing.value]
+            else False,
             keycloak_client_id=os.getenv("KEYCLOAK_CLIENT_ID", ""),
             keycloak_server_url=os.getenv("KEYCLOAK_SERVER_URL", ""),
             keycloak_realm=os.getenv("KEYCLOAK_REALM", ""),

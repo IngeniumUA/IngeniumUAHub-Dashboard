@@ -7,15 +7,16 @@ from app.page.user_analytics_page import user_analytics
 
 def run_main_app():
     # Top pages configuration
-    pg = st.navigation([
-        st.Page(main_page),
-        st.Page(user_analytics),
-    ])
+    pg = st.navigation(
+        [
+            st.Page(main_page),
+            st.Page(user_analytics),
+        ]
+    )
     pg.run()
 
     # General authentication code
     authenticate_user_component()
-
 
 
 if __name__ == "__main__":
