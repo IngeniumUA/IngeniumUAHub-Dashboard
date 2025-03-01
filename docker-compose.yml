@@ -3,13 +3,16 @@ services:
     build:
       context: data_analytics  # Only send this folder to Docker
       dockerfile: Dockerfile
-    entrypoint: ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    entrypoint: ["streamlit", "run", "app/main.py", "--server.port=4200", "--server.address=0.0.0.0"]
     tty: true
     restart: unless-stopped
     environment:
       environment: "local"
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
+      KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
     ports:
-      - "8501:8501"
+      - "4200:4200"
     develop:
       # Create a `watch` configuration to update the app
       # https://docs.docker.com/compose/file-watch/#compose-watch-versus-bind-mounts
