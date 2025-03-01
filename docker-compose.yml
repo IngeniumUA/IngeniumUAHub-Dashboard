@@ -1,0 +1,24 @@
+services:
+  data_analytics:
+    build:
+      context: data_analytics  # Only send this folder to Docker
+      dockerfile: Dockerfile
+    entrypoint: ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    tty: true
+    restart: unless-stopped
+    environment:
+      environment: "local"
+    ports:
+      - "8501:8501"
+    develop:
+      # Create a `watch` configuration to update the app
+      # https://docs.docker.com/compose/file-watch/#compose-watch-versus-bind-mounts
+      watch:
+        # Sync the working directory with the `/app` directory in the container
+        - action: sync+restart
+          path: ./data_analytics
+          target: /data_analytics
+          # Exclude the project virtual environment — it could be for a
+          # different platform in the container
+          ignore:
+            - .venv/
