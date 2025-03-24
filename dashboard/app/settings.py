@@ -57,6 +57,9 @@ class Settings(BaseModel):
     database_url: str
     echo_sql: bool = True  # Print sql to terminal
 
+    # Core API url
+    core_api_url: str
+
     # Public auth uri
     keycloak_client_id: str
 
@@ -76,6 +79,7 @@ class Settings(BaseModel):
         return Settings(
             running_environment=(environment := set_environment()),
             database_url=set_db_url(environment),
+            core_api_url=os.environ.get("CORE_API_URL"),
             echo_sql=True
             if environment.value
             in [EnvironmentEnum.local.value, EnvironmentEnum.testing.value]

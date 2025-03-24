@@ -1,7 +1,7 @@
 services:
   data_analytics:
     build:
-      context: data_analytics  # Only send this folder to Docker
+      context: dashboard  # Only send this folder to Docker
       dockerfile: Dockerfile
     entrypoint: ["streamlit", "run", "app/main.py", "--server.port=4200", "--server.address=0.0.0.0"]
     tty: true
@@ -19,8 +19,8 @@ services:
       watch:
         # Sync the working directory with the `/app` directory in the container
         - action: sync+restart
-          path: ./data_analytics
-          target: /data_analytics
+          path: dashboard
+          target: /dashboard
           # Exclude the project virtual environment — it could be for a
           # different platform in the container
           ignore:
