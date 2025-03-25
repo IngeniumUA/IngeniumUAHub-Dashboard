@@ -5,6 +5,7 @@ from requests import post
 
 from app.settings import settings
 
+
 @st.cache_resource(ttl=timedelta(seconds=1))
 def authenticate_user_component():
     # Build login URL
