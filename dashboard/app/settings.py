@@ -62,6 +62,7 @@ class Settings(BaseModel):
 
     # Public auth uri
     keycloak_client_id: str
+    keycloak_jwks_uri: str
 
     # Admin
     # Keycloak variables
@@ -84,6 +85,7 @@ class Settings(BaseModel):
             if environment.value
             in [EnvironmentEnum.local.value, EnvironmentEnum.testing.value]
             else False,
+            keycloak_jwks_uri=os.environ.get("KEYCLOAK_JWKS_URI"),
             keycloak_client_id=os.getenv("KEYCLOAK_CLIENT_ID", ""),
             keycloak_server_url=os.getenv("KEYCLOAK_SERVER_URL", ""),
             keycloak_realm=os.getenv("KEYCLOAK_REALM", ""),
