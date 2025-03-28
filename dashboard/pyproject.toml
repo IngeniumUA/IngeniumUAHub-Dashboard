@@ -6,10 +6,11 @@ requires-python = ">=3.13"
 dependencies = [
     "streamlit>=1.42.0",
     "pydantic~=2.10.5",
-    "requests~=2.32.2",  # Both requests and httpx (more performant) might not be needed
+    "requests~=2.32.2", # Both requests and httpx (more performant) might not be needed
     "polars[pyarrow]>=1.23.0",
     "duckdb>=1.2.0",
     "httpx==0.28.1",
+    "python-keycloak<=5.3.1",
 ]
 
 [tool.black]
