@@ -23,5 +23,3 @@ def main_page():
     #     st.write(response.status_code)
     #     st.write(response.text)
     #     st.write(response.content)
-
-
