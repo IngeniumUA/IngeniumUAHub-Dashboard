@@ -2,6 +2,7 @@ import streamlit as st
 
 from app.modules.authentication.authentication import authenticate_user_component
 from app.page.main_page import main_page
+from app.page.transaction_analytics_page import transaction_analytics
 from app.page.user_analytics_page import user_analytics
 
 
@@ -11,6 +12,7 @@ def run_main_app():
         [
             st.Page(main_page),
             st.Page(user_analytics),
+            st.Page(transaction_analytics),
         ]
     )
     pg.run()
