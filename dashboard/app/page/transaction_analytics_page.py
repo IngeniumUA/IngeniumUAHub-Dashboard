@@ -6,13 +6,18 @@ import plotly.graph_objects as pgo
 
 from app.systems.ingestion.csv_files import load_in_csv_file
 
-
 def transaction_analytics():
-    source_df = load_in_csv_file()
+    source_df = st.session_state.get('source_df', None)
     if source_df is None:
+        st.session_state.source_df = load_in_csv_file()
         return
 
-    time_interval = '1h'
+    time_interval = st.selectbox(
+        "Selecteer tijdsinterval",
+        ('5m', '30m', '1h', '1d'),
+        placeholder="Select contact method...",
+    )
+
     per_timestamp = source_df.group_by(
         pl.col('created_timestamp').dt.round(time_interval)
     ).agg(
@@ -30,7 +35,7 @@ def transaction_analytics():
 
     fig = make_subplots(1, 2,
                         x_title=f"Bestellingen per {time_interval}, alle dagen",
-                        subplot_titles=["Overlayed"])
+                        subplot_titles=["Orders (n) as f of t"])
 
     fig.add_trace(
         pgo.Scatter(x=per_timestamp["created_timestamp"], y=per_timestamp['transaction_count'],
@@ -45,6 +50,8 @@ def transaction_analytics():
             name="Bestellingen per product",
             x=per_product_blueprint["blueprint_name"],
             y=per_product_blueprint["transaction_count"],
+            text=per_product_blueprint["transaction_count"],  # Display values
+            textposition="auto"  # Automatically position the text
         ),
         row=1, col=2
     )
