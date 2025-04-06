@@ -8,6 +8,7 @@ from app.page.user_analytics_page import user_analytics
 
 def run_main_app():
     # Top pages configuration
+    st.set_page_config(layout="wide")
     pg = st.navigation(
         [
             st.Page(main_page),
