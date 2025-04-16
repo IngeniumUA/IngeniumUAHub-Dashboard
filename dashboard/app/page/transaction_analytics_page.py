@@ -40,7 +40,7 @@ def transaction_analytics():
     fig.add_trace(
         pgo.Scatter(x=per_timestamp["created_timestamp"], y=per_timestamp['transaction_count'],
                     mode='lines+markers',
-                    name="Graph",
+                    name=f"Orders per {time_interval}",
                     fill="tozeroy"
                     ),
         row=1, col=1
