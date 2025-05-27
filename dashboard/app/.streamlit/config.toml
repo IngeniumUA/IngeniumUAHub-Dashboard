@@ -1,0 +1,12 @@
+[theme]
+primaryColor="#1f2980"
+backgroundColor="#FFFFFF"
+
+[client]
+#toolbarMode="viewer"
+
+# this is needed for local development with docker
+[server]
+headless = true  # If you don't want to start the default browser
+runOnSave = true  # For local development
+fileWatcherType = "poll" # If running docker on windows host

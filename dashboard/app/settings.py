@@ -62,6 +62,7 @@ class Settings(BaseModel):
 
     # Public auth uri
     keycloak_client_id: str
+    keycloak_client_secret: str
     keycloak_jwks_uri: str
 
     # Admin
@@ -87,6 +88,7 @@ class Settings(BaseModel):
             else False,
             keycloak_jwks_uri=os.environ.get("KEYCLOAK_JWKS_URI"),
             keycloak_client_id=os.getenv("KEYCLOAK_CLIENT_ID", ""),
+            keycloak_client_secret=os.getenv("KEYCLOAK_CLIENT_SECRET", ""),
             keycloak_server_url=os.getenv("KEYCLOAK_SERVER_URL", ""),
             keycloak_realm=os.getenv("KEYCLOAK_REALM", ""),
             commit_sha=os.getenv("COMMIT_SHA", None),
