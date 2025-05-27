@@ -14,7 +14,7 @@ def run_main_app():
     # -----
     # Setup
     core_check_container = st.container()
-    core_health_check(core_check_container) # Core health check
+    core_health_check(core_check_container)  # Core health check
     authenticate_user_component()  # Authentication on user-level
 
     # -----

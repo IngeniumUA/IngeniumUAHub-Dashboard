@@ -9,6 +9,7 @@ from app.settings import settings
 def get_core_client():
     return CoreClient()
 
+
 @st.fragment
 def core_health_check(streamlit_container: DeltaGenerator):
     core = get_core_client()
@@ -19,8 +20,7 @@ def core_health_check(streamlit_container: DeltaGenerator):
     st.write(f"""server_url={settings.keycloak_server_url},
         client_id={settings.keycloak_client_id},
         realm_name={settings.keycloak_realm},
-        client_secret_key={settings.keycloak_client_secret}"""
-    )
+        client_secret_key={settings.keycloak_client_secret}""")
 
     # Health check
     st.markdown("#### Health Check")

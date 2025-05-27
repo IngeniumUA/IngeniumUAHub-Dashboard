@@ -24,7 +24,9 @@ class CoreClient:  # todo rename to CoreAPI
             self._keycloak_token = self._keycloak_access_token()
             self._keycloak_start = datetime.now(timezone.utc)
 
-        if (datetime.now(timezone.utc) - self._keycloak_start).total_seconds() > self._keycloak_token["expires_in"]:
+        if (
+            datetime.now(timezone.utc) - self._keycloak_start
+        ).total_seconds() > self._keycloak_token["expires_in"]:
             # TODO Use refresh token instead of just fetching new access token
             self._keycloak_token = self._keycloak_access_token()
 
@@ -45,25 +47,21 @@ class CoreClient:  # todo rename to CoreAPI
             realm_name=settings.keycloak_realm,
             client_secret_key=settings.keycloak_client_secret,
         )
-        return keycloak_openid.token(grant_type='client_credentials')
+        return keycloak_openid.token(grant_type="client_credentials")
 
     def health_check(self) -> dict:
         client = self.client
         response: Response = client.get("")
-        return {
-            "status_code": response.status_code,
-            "response": response.text
-        }
+        return {"status_code": response.status_code, "response": response.text}
 
     def auth_check(self) -> dict:
         client = self.client
         response: Response = client.get("/auth/check")
-        return {
-            "status_code": response.status_code,
-            "response": response.text
-        }
+        return {"status_code": response.status_code, "response": response.text}
 
-    def query_transactions(self, limit: int = 100, offset: int = 50, **kwargs) -> list[dict]:
+    def query_transactions(
+        self, limit: int = 100, offset: int = 50, **kwargs
+    ) -> list[dict]:
         query_param = {}
         response = self.client.get("/api/v1/transaction", params=query_param)
         return response.text  # fixme
