@@ -1,6 +1,5 @@
 import streamlit as st
 
-from app.page import user_analytics_page
 from app.page.main_page import main_page
 from app.page.ordertracking_analytics_page import order_tracking_analytics_page
 from app.page.transaction_analytics_page import transaction_analytics_page

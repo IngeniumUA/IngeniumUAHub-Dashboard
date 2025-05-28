@@ -56,8 +56,12 @@ def parse_transactions_to_df(transactions: list[dict]) -> pl.DataFrame:
     # Translating column datatypes and adjusted column names
     adjusted_df = base_df.select(
         pl.col("interaction.interaction_id").alias("interaction_id"),
-        pl.col("created_timestamp").str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f").alias("created_timestamp"),
-        pl.col("completed_timestamp").str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f", strict=False).alias("completed_timestamp"),
-        pl.col("product_blueprint_name")
+        pl.col("created_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
+        .alias("created_timestamp"),
+        pl.col("completed_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f", strict=False)
+        .alias("completed_timestamp"),
+        pl.col("product_blueprint_name"),
     )
     return adjusted_df

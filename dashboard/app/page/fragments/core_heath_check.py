@@ -23,7 +23,7 @@ def core_health_check(streamlit_container: Optional[DeltaGenerator]):
         streamlit_container.write(f"""server_url={settings.keycloak_server_url},
             client_id={settings.keycloak_client_id},
             realm_name={settings.keycloak_realm},
-            client_secret_key={settings.keycloak_client_secret is not None and settings.keycloak_client_secret != ''}""")
+            client_secret_key={settings.keycloak_client_secret is not None and settings.keycloak_client_secret != ""}""")
 
     # Health check
     try:

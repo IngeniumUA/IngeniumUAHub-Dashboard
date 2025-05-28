@@ -22,7 +22,7 @@ def transaction_analytics(container: DeltaGenerator, dataframe: pl.DataFrame, ke
         label="Select time interval",
         options=options,
         key=time_interval_key,
-        index=(len(options) // 2), # Default to middle
+        index=(len(options) // 2),  # Default to middle
     )
 
     #
@@ -34,7 +34,8 @@ def transaction_analytics(container: DeltaGenerator, dataframe: pl.DataFrame, ke
         .sort("created_timestamp")
     )
     per_completed_timestamp = (
-        dataframe.filter(pl.col("completed_timestamp").is_not_null()).group_by(pl.col("completed_timestamp").dt.round(time_interval))
+        dataframe.filter(pl.col("completed_timestamp").is_not_null())
+        .group_by(pl.col("completed_timestamp").dt.round(time_interval))
         .agg(
             pl.col("interaction_id").count().alias("transaction_count"),
         )
