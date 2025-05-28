@@ -1,15 +1,24 @@
 import streamlit as st
 import duckdb
 
+from app.settings import settings
+
 
 @st.cache_resource
 def duck_connection() -> duckdb.DuckDBPyConnection:
+    """
+    Global DuckDB Database connection
+    """
     if "duck_conn" not in st.session_state:
-        duck = duckdb.connect(
-            "duck_explaining.duckdb"
-        )  # TODO Align with the rest of the app (use same duck)
+        # If the application is running in production, we use an in memory database
+        # When developing, to prevent populating the db on every change, we store in a file
+        duck_url = "duck.duckdb" if settings.is_debug() else ":memory:"
 
-        # TODO Check if duckdb is correctly initialised? -> Check if tables exist, etc
+        # Configuration options
+        # https://duckdb.org/docs/stable/configuration/overview.html#configuration-reference
+        config = {}
 
+        # Creating connection
+        duck = duckdb.connect(database=duck_url, config=config)
         st.session_state["duck_conn"] = duck
     return st.session_state["duck_conn"]

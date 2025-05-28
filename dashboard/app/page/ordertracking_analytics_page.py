@@ -11,8 +11,8 @@ def order_tracking_analytics_page():
     # Displaying
     # -----
     st.header("Order Tracking Analytics Page")
-    with st.container(border=True) as configuration_container:
-        configuration_container.subheader("Configuration")
+    with st.container(border=True):
+        st.subheader("Configuration")
         ingestion_col, _, _ = st.columns(3)
 
         ingestion_col.text("Ingestion")

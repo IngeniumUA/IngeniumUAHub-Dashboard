@@ -1,9 +1,20 @@
 import streamlit as st
+
+from app.modules.authentication.authentication import authenticate_user_component
+from app.page.fragments.core_heath_check import core_health_check
 from app.settings import settings
 
 
 def main_page():
     st.title("Main Page")
+
+    # -----
+    # Display
+    core_check_container = st.container()
+    core_health_check(streamlit_container=core_check_container)  # Core health check
+    authenticate_user_component()  # Authentication on user-level
+
+    #
     if "keycloak_token" in st.session_state:
         st.write(st.session_state["keycloak_token"])
     else:

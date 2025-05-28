@@ -4,6 +4,7 @@ import httpx
 from httpx import Client, Response
 
 from keycloak import KeycloakOpenID
+from pydantic import TypeAdapter
 
 from app.settings import settings
 
@@ -64,4 +65,5 @@ class CoreClient:  # todo rename to CoreAPI
     ) -> list[dict]:
         query_param = {}
         response = self.client.get("/api/v1/transaction", params=query_param)
-        return response.text  # fixme
+
+        return TypeAdapter(list[dict]).validate_json(response.content)

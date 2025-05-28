@@ -1,8 +1,8 @@
 import streamlit as st
 
-from app.modules.authentication.authentication import authenticate_user_component
-from app.page.fragments.core_heath_check import core_health_check
+from app.page import user_analytics_page
 from app.page.main_page import main_page
+from app.page.ordertracking_analytics_page import order_tracking_analytics_page
 from app.page.transaction_analytics_page import transaction_analytics_page
 from app.page.user_analytics_page import user_analytics
 
@@ -13,9 +13,6 @@ def run_main_app():
 
     # -----
     # Setup
-    core_check_container = st.container()
-    core_health_check(core_check_container)  # Core health check
-    authenticate_user_component()  # Authentication on user-level
 
     # -----
     # Pages
@@ -24,6 +21,7 @@ def run_main_app():
             st.Page(main_page),
             st.Page(user_analytics),
             st.Page(transaction_analytics_page),
+            st.Page(order_tracking_analytics_page),
         ]
     )
     pg.run()

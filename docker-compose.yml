@@ -3,7 +3,8 @@ services:
     build:
       context: dashboard  # Only send this folder to Docker
       dockerfile: Dockerfile
-    entrypoint: ["streamlit", "run", "app/main.py", "--server.port=4200", "--server.address=0.0.0.0"]
+    entrypoint: ["streamlit", "run", "app/main.py", "--server.port=4200", "--server.address=0.0.0.0",
+                 "--server.fileWatcherType=poll", "--server.runOnSave=true"]
     tty: true  # Connect container's terminal to IDE terminal
     restart: unless-stopped
     environment:
@@ -14,10 +15,16 @@ services:
       KEYCLOAK_JWKS_URI: ${KEYCLOAK_JWKS_URI}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
-    ports:
-      - "4200:4200"
     volumes:
       # Bind the local dashboard directory to /dashboard in the container
       - ./dashboard:/dashboard
       # Explicitly exclude the .venv directory to avoid conflicts
       - /dashboard/.venv
+    ports:
+      - "4200:4200"
+    networks:
+      - ingeniumuahub_net
+
+networks:
+  ingeniumuahub_net:
+    name: ingeniumuahub_net  # This creates the named network
