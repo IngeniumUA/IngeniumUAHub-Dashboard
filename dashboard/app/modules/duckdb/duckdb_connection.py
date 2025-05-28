@@ -1,9 +1,6 @@
 import streamlit as st
 import duckdb
 
-from app.settings import settings
-
-
 @st.cache_resource
 def duck_connection() -> duckdb.DuckDBPyConnection:
     """
@@ -12,7 +9,7 @@ def duck_connection() -> duckdb.DuckDBPyConnection:
     if "duck_conn" not in st.session_state:
         # If the application is running in production, we use an in memory database
         # When developing, to prevent populating the db on every change, we store in a file
-        duck_url = "duck.duckdb" if settings.is_debug() else ":memory:"
+        duck_url = ":memory:" # "duck.duckdb" if settings.is_debug() else ":memory:"
 
         # Configuration options
         # https://duckdb.org/docs/stable/configuration/overview.html#configuration-reference
