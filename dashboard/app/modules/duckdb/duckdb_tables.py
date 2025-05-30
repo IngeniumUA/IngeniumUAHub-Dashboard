@@ -10,6 +10,7 @@ TRANS_TABLE = "hubtransaction"
 CHECK_TABLE = "hubcheckout"
 CHECK_TRACK_TABLE = "hubcheckouttransaction"
 
+
 @st.cache_resource(ttl=datetime.timedelta(seconds=15))
 def duckdb_table_summary() -> pl.DataFrame:
     stmt = """
@@ -23,5 +24,8 @@ def duckdb_table_summary() -> pl.DataFrame:
     duck = duck_connection()
     return duck.execute(stmt).df()
 
-def table_exists(table_name: Literal["hubtransaction", "hubcheckout", "hubcheckouttracker"]) -> bool:
+
+def table_exists(
+    table_name: Literal["hubtransaction", "hubcheckout", "hubcheckouttracker"],
+) -> bool:
     return table_name in duckdb_table_summary()["table_name"].to_list()

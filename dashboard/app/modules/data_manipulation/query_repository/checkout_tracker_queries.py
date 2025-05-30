@@ -2,6 +2,7 @@ import streamlit as st
 
 from app.modules.duckdb.duckdb_connection import duck_connection
 
+
 @st.cache_data
 def get_checkout_tracker_count() -> int:
     stmt = """

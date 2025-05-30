@@ -2,13 +2,22 @@ import datetime
 
 import streamlit as st
 
-from app.modules.data_manipulation.query_repository.checkout_queries import get_checkout_count
-from app.modules.data_manipulation.query_repository.checkout_tracker_queries import get_checkout_tracker_count
-from app.modules.data_manipulation.query_repository.transaction_queries import get_transaction_count
+from app.modules.data_manipulation.query_repository.checkout_queries import (
+    get_checkout_count,
+)
+from app.modules.data_manipulation.query_repository.checkout_tracker_queries import (
+    get_checkout_tracker_count,
+)
+from app.modules.data_manipulation.query_repository.transaction_queries import (
+    get_transaction_count,
+)
 from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_exists
 from app.page.fragments.core_heath_check import get_core_client
-from app.systems.ingestion.core_to_duckdb import CoreSyncTransactionManager, CoreSyncCheckoutManager, \
-    CoreSyncCheckoutTrackerManager
+from app.systems.ingestion.core_to_duckdb import (
+    CoreSyncTransactionManager,
+    CoreSyncCheckoutManager,
+    CoreSyncCheckoutTrackerManager,
+)
 
 
 @st.fragment(run_every=datetime.timedelta(seconds=5))
@@ -21,11 +30,12 @@ def duck_db_status_fixture():
         st.markdown("### Tables and their statistics")
         st.dataframe(duckdb_table_summary())
 
+
 def duckdb_ingestion_analytics():
     tables = ("HubTransaction", "HubCheckout", "HubCheckoutTracker")
 
     with st.container(border=True):
-        for table_name, col in zip(tables, st.columns(len(tables))):
+        for table_name, col in zip(tables, st.columns(len(tables)), strict=False):
             with col.container(border=True):
                 st.markdown(f"#### {table_name}")
 
@@ -35,9 +45,13 @@ def duckdb_ingestion_analytics():
                 st.write(f"Present in database: {in_db_txt}")
 
                 #
-                st.write(f"Automatic Sync")
+                st.write("Automatic Sync")
                 toggle_key = f"ingest_{table_name.lower()}"
-                st.toggle(key=toggle_key, label="Enable auto sync", value=st.session_state.get(toggle_key, False))
+                st.toggle(
+                    key=toggle_key,
+                    label="Enable auto sync",
+                    value=st.session_state.get(toggle_key, False),
+                )
 
                 #
                 st.button("Sync once", key=toggle_key + "_sync_once")
@@ -58,7 +72,9 @@ def duck_ingestion_page():
 
     # -----
     st.title("Data Ingestion")
-    st.caption("Continuous monitoring tool for loading data from different services into duckdb for analytics")
+    st.caption(
+        "Continuous monitoring tool for loading data from different services into duckdb for analytics"
+    )
 
     # DuckDB Statistics
     duck_db_status_fixture()

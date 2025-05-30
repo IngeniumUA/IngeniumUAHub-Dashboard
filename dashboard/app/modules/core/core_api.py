@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Optional, Literal, Any
+from typing import Optional
 import httpx
 from httpx import Client, Response
 
@@ -80,7 +80,6 @@ class CoreClient:  # todo rename to CoreAPI
         query_param = dict(limit=limit, offset=offset)
         response = self.client.get("/api/v1/checkout", params=query_param)
         return TypeAdapter(list[dict]).validate_json(response.content)
-
 
     def count_transactions(self, **kwargs) -> int:
         query_param = {}

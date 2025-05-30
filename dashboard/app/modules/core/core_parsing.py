@@ -69,6 +69,7 @@ def parse_transactions_to_df(transactions: list[dict]) -> pl.DataFrame:
     )
     return adjusted_df
 
+
 def parse_checkouts_to_df(checkouts: list[dict]) -> pl.DataFrame:
     base_df = pl.json_normalize(data=checkouts, max_level=2)
 
@@ -80,8 +81,12 @@ def parse_checkouts_to_df(checkouts: list[dict]) -> pl.DataFrame:
         pl.col("user_uuid"),
         pl.col("amount"),
         pl.col("payment_provider"),
-        pl.col("checkout_metadata.payment_provider_metadata.payment_intent").alias("payment_intent"),
-        pl.col("checkout_metadata.checkout_flow_information.user_agent").alias("user_agent"),
+        pl.col("checkout_metadata.payment_provider_metadata.payment_intent").alias(
+            "payment_intent"
+        ),
+        pl.col("checkout_metadata.checkout_flow_information.user_agent").alias(
+            "user_agent"
+        ),
         pl.col("checkout_metadata.checkout_flow_information.referer").alias("referer"),
         pl.col("created_timestamp")
         .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
@@ -94,6 +99,7 @@ def parse_checkouts_to_df(checkouts: list[dict]) -> pl.DataFrame:
         .alias("last_updated_timestamp"),
     )
     return adjusted_df
+
 
 def parse_checkouttrackers_to_df(checkout_trackers: list[dict]) -> pl.DataFrame:
     base_df = pl.json_normalize(data=checkout_trackers, max_level=2)
