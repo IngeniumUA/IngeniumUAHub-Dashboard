@@ -59,9 +59,55 @@ def parse_transactions_to_df(transactions: list[dict]) -> pl.DataFrame:
         pl.col("created_timestamp")
         .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
         .alias("created_timestamp"),
+        # pl.col("last_update_timestamp")
+        # .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
+        # .alias("last_update_timestamp"),
         pl.col("completed_timestamp")
         .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f", strict=False)
         .alias("completed_timestamp"),
         pl.col("product_blueprint_name"),
+    )
+    return adjusted_df
+
+def parse_checkouts_to_df(checkouts: list[dict]) -> pl.DataFrame:
+    base_df = pl.json_normalize(data=checkouts, max_level=2)
+
+    print(base_df.columns)
+
+    # Translating column datatypes and adjusted column names
+    adjusted_df = base_df.select(
+        pl.col("checkout_uuid"),
+        pl.col("user_uuid"),
+        pl.col("amount"),
+        pl.col("payment_provider"),
+        pl.col("checkout_metadata.payment_provider_metadata.payment_intent").alias("payment_intent"),
+        pl.col("checkout_metadata.checkout_flow_information.user_agent").alias("user_agent"),
+        pl.col("checkout_metadata.checkout_flow_information.referer").alias("referer"),
+        pl.col("created_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
+        .alias("created_timestamp"),
+        pl.col("completed_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f", strict=False)
+        .alias("completed_timestamp"),
+        pl.col("last_updated_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
+        .alias("last_updated_timestamp"),
+    )
+    return adjusted_df
+
+def parse_checkouttrackers_to_df(checkout_trackers: list[dict]) -> pl.DataFrame:
+    base_df = pl.json_normalize(data=checkout_trackers, max_level=2)
+
+    # Translating column datatypes and adjusted column names
+    adjusted_df = base_df.select(
+        pl.col("id"),
+        pl.col("checkout_tracker_status"),
+        pl.col("disabled"),
+        pl.col("created_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
+        .alias("created_timestamp"),
+        pl.col("last_update_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
+        .alias("last_update_timestamp"),
     )
     return adjusted_df
