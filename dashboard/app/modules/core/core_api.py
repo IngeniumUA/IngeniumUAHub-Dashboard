@@ -15,9 +15,10 @@ class CoreClient:  # todo rename to CoreAPI
     Note it does not use any user authentication, but an API account.
     """
 
-    def __init__(self):
+    def __init__(self, connection_timeout: float = 10.0):
         self._keycloak_start: datetime | None = None
         self._keycloak_token: Optional[dict] = None
+        self.connection_timeout: float = connection_timeout  # In seconds
 
     @property
     def keycloak_token(self):
@@ -38,7 +39,9 @@ class CoreClient:  # todo rename to CoreAPI
         headers = {
             "Authorization": f"Bearer {self.keycloak_token['access_token']}",
         }
-        return httpx.Client(base_url=settings.core_api_url, headers=headers)
+        return httpx.Client(base_url=settings.core_api_url,
+                            headers=headers,
+                            timeout=self.connection_timeout)
 
     @classmethod
     def _keycloak_access_token(cls):

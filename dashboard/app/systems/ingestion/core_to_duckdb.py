@@ -8,8 +8,8 @@ from app.modules.core.core_parsing import (
     parse_checkouttrackers_to_df,
     parse_checkouts_to_df,
 )
-from app.modules.duckdb.duckdb_connection import duck_connection
-from app.page.fragments.core_heath_check import get_core_client
+from app.page.cached_resources.duckdb_connection import duck_connection
+from app.page.cached_resources.clients import get_core_client
 
 
 class CoreSyncManager:

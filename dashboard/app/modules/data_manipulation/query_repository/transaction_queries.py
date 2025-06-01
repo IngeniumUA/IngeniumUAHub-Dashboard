@@ -1,6 +1,6 @@
 import streamlit as st
 
-from app.modules.duckdb.duckdb_connection import duck_connection
+from app.page.cached_resources.duckdb_connection import duck_connection
 
 
 @st.cache_data

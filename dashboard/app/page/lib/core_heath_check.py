@@ -3,14 +3,8 @@ from typing import Optional
 import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
 
-from app.modules.core.core_api import CoreClient
+from app.page.cached_resources.clients import get_core_client
 from app.settings import settings
-
-
-@st.cache_resource
-def get_core_client():
-    return CoreClient()
-
 
 @st.fragment
 def core_health_check(streamlit_container: Optional[DeltaGenerator]):

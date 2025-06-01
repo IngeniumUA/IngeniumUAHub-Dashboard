@@ -4,14 +4,14 @@ from typing import Literal
 import polars as pl
 import streamlit as st
 
-from app.modules.duckdb.duckdb_connection import duck_connection
+from app.page.cached_resources.duckdb_connection import duck_connection
 
 TRANS_TABLE = "hubtransaction"
 CHECK_TABLE = "hubcheckout"
 CHECK_TRACK_TABLE = "hubcheckouttransaction"
 
 
-@st.cache_resource(ttl=datetime.timedelta(seconds=15))
+@st.cache_resource(ttl=datetime.timedelta(seconds=5))
 def duckdb_table_summary() -> pl.DataFrame:
     stmt = """
     SELECT
