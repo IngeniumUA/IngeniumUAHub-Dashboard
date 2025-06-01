@@ -12,7 +12,7 @@ from app.modules.data_manipulation.query_repository.transaction_queries import (
     get_transaction_count,
 )
 from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_exists
-from app.page.fragments.core_heath_check import get_core_client
+from app.page.lib.core_heath_check import get_core_client
 from app.systems.ingestion.core_to_duckdb import (
     CoreSyncTransactionManager,
     CoreSyncCheckoutManager,

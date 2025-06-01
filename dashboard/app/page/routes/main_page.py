@@ -1,7 +1,7 @@
 import streamlit as st
 
-from app.modules.authentication.authentication import authenticate_user_component
-from app.page.fragments.core_heath_check import core_health_check
+from app.page.lib.authentication import authenticate_user_component
+from app.page.lib.core_heath_check import core_health_check
 from app.settings import settings
 
 

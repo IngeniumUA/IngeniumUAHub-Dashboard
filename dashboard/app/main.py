@@ -1,10 +1,10 @@
 import streamlit as st
 
-from app.page.duck_ingestion_page import duck_ingestion_page
-from app.page.main_page import main_page
-from app.page.ordertracking_analytics_page import order_tracking_analytics_page
-from app.page.transaction_analytics_page import transaction_analytics_page
-from app.page.user_analytics_page import user_analytics
+from app.page.routes.duck_ingestion_page import duck_ingestion_page
+from app.page.routes.main_page import main_page
+from app.page.routes.ordertracking_analytics_page import order_tracking_analytics_page
+from app.page.routes.transaction_analytics_page import transaction_analytics_page
+from app.page.routes.user_analytics_page import user_analytics
 
 
 def run_main_app():
