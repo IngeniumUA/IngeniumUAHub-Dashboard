@@ -73,8 +73,6 @@ def parse_transactions_to_df(transactions: list[dict]) -> pl.DataFrame:
 def parse_checkouts_to_df(checkouts: list[dict]) -> pl.DataFrame:
     base_df = pl.json_normalize(data=checkouts, max_level=2)
 
-    print(base_df.columns)
-
     # Translating column datatypes and adjusted column names
     adjusted_df = base_df.select(
         pl.col("checkout_uuid"),
