@@ -60,6 +60,10 @@ class Settings(BaseModel):
     # Core API url
     core_api_url: str
 
+    # Umami
+    umami_username: str
+    umami_password: str
+
     # Public auth uri
     keycloak_client_id: str
     keycloak_client_secret: str
@@ -92,6 +96,8 @@ class Settings(BaseModel):
             keycloak_server_url=os.getenv("KEYCLOAK_SERVER_URL", ""),
             keycloak_realm=os.getenv("KEYCLOAK_REALM", ""),
             commit_sha=os.getenv("COMMIT_SHA", None),
+            umami_username=os.getenv("UMAMI_USERNAME", ""),
+            umami_password=os.getenv("UMAMI_PASSWORD", ""),
         )
 
 
