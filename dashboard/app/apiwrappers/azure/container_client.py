@@ -30,4 +30,3 @@ class AzureContainerClient:
             credential=self.credential,
             container_name=self.container_name,
         )
-

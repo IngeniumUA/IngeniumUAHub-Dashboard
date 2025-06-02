@@ -6,6 +6,7 @@ from streamlit.delta_generator import DeltaGenerator
 from app.page.cached_resources.clients import get_umami_client
 from app.settings import settings
 
+
 @st.fragment
 def umami_health_check(streamlit_container: Optional[DeltaGenerator]):
     umami_client = get_umami_client()

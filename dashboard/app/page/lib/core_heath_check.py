@@ -6,6 +6,7 @@ from streamlit.delta_generator import DeltaGenerator
 from app.page.cached_resources.clients import get_core_client
 from app.settings import settings
 
+
 @st.fragment
 def core_health_check(streamlit_container: Optional[DeltaGenerator]):
     core = get_core_client()

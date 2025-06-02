@@ -8,9 +8,10 @@ from app.settings import settings
 @st.cache_resource
 def get_core_client():
     connection_timeout = 10.0 if settings.is_debug() else 3.0
-    return CoreClient(base_url=settings.core_api_url,
-                      connection_timeout=connection_timeout
-                      )
+    return CoreClient(
+        base_url=settings.core_api_url, connection_timeout=connection_timeout
+    )
+
 
 @st.cache_resource
 def get_umami_client() -> UmamiClient:
