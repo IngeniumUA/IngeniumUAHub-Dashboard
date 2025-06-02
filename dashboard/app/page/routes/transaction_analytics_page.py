@@ -16,7 +16,7 @@ def transaction_analytics(container: DeltaGenerator, dataframe: pl.DataFrame, ke
         return
 
     time_interval_key = key + "_time_interval_key"
-    options = ("5m", "30m", "1h", "1d")
+    options = ("5m", "30m", "1h", "1d", "1w", "1mo")
 
     time_interval = container.selectbox(
         label="Select time interval",
@@ -29,7 +29,7 @@ def transaction_analytics(container: DeltaGenerator, dataframe: pl.DataFrame, ke
     per_created_timestamp = (
         dataframe.group_by(pl.col("created_timestamp").dt.round(time_interval))
         .agg(
-            pl.col("interaction_id").count().alias("transaction_count"),
+            pl.col("id").count().alias("transaction_count"),
         )
         .sort("created_timestamp")
     )
@@ -37,7 +37,7 @@ def transaction_analytics(container: DeltaGenerator, dataframe: pl.DataFrame, ke
         dataframe.filter(pl.col("completed_timestamp").is_not_null())
         .group_by(pl.col("completed_timestamp").dt.round(time_interval))
         .agg(
-            pl.col("interaction_id").count().alias("transaction_count"),
+            pl.col("id").count().alias("transaction_count"),
         )
         .sort("completed_timestamp")
     )
@@ -45,7 +45,7 @@ def transaction_analytics(container: DeltaGenerator, dataframe: pl.DataFrame, ke
     per_product_blueprint = (
         dataframe.group_by(pl.col("product_blueprint_name"))
         .agg(
-            pl.col("interaction_id").count().alias("transaction_count"),
+            pl.col("id").count().alias("transaction_count"),
         )
         .sort("transaction_count")
     )
@@ -103,3 +103,6 @@ def transaction_analytics_page():
     # Displaying
     container = st.container()
     transaction_analytics(container=container, dataframe=df, key="transaction_overview")
+
+    # Dataframe
+    st.dataframe(df)

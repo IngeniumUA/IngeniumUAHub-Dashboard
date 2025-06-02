@@ -19,6 +19,7 @@ def parse_transactions_to_df(transactions: list[dict]) -> pl.DataFrame:
         'created_timestamp': '2025-04-30T11:25:51.647536'
         },
     'completed_timestamp': '2025-04-30T11:25:51.700657',
+    'last_update_timestamp': '2025-04-30T11:25:51.700657',
     'created_timestamp': '2025-04-30T11:25:51.647536',
     'transaction_status': 1,
     'note': '',
@@ -55,17 +56,24 @@ def parse_transactions_to_df(transactions: list[dict]) -> pl.DataFrame:
 
     # Translating column datatypes and adjusted column names
     adjusted_df = base_df.select(
-        pl.col("interaction.interaction_id").alias("interaction_id"),
+        pl.col("interaction.interaction_id").alias("id"),
         pl.col("created_timestamp")
         .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
         .alias("created_timestamp"),
-        # pl.col("last_update_timestamp")
-        # .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f")
-        # .alias("last_update_timestamp"),
+        pl.col("last_update_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.fZ")
+        .alias("last_update_timestamp"),
         pl.col("completed_timestamp")
         .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.f", strict=False)
         .alias("completed_timestamp"),
+        pl.col("product_blueprint_id"),
         pl.col("product_blueprint_name"),
+        pl.col("price_policy_id"),
+        pl.col("checkout_uuid"),
+        pl.col("validity"),
+        pl.col("transaction_status").alias("payment_status"),
+        pl.col("interaction.item_id").alias("item_id"),
+        pl.col("interaction.user_uuid").alias("user_uuid"),
     )
     return adjusted_df
 

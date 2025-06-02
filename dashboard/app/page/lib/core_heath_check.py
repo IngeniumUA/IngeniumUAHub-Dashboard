@@ -30,7 +30,7 @@ def core_health_check(streamlit_container: Optional[DeltaGenerator]):
 
     # Auth check (for service)
     try:
-        auth_check = core.health_check()
+        auth_check = core.auth_check()
         if streamlit_container:
             streamlit_container.markdown("#### Core auth Check")
             streamlit_container.write(auth_check)
