@@ -1,6 +1,9 @@
 import streamlit as st
 
+from app.page.lib.authentication import authenticate_user_component
 from app.page.routes.duck_ingestion_page import duck_ingestion_page
+from app.page.routes.item_pages.item_detail_page import item_detail_page
+from app.page.routes.item_pages.items_overview_page import items_overview_page
 from app.page.routes.main_page import main_page
 from app.page.routes.ordertracking_analytics_page import order_tracking_analytics_page
 from app.page.routes.transaction_analytics_page import transaction_analytics_page
@@ -13,6 +16,10 @@ def run_main_app():
 
     # -----
     # Setup
+    authenticate_user_component()  # Authentication on user-level
+    if "keycloak_token" not in st.session_state:
+        st.warning("Not authenticated")
+        # return
 
     # -----
     # Pages
@@ -23,6 +30,8 @@ def run_main_app():
             st.Page(user_analytics),
             st.Page(transaction_analytics_page),
             st.Page(order_tracking_analytics_page),
+            st.Page(items_overview_page),
+            st.Page(page=item_detail_page, title="Item Detail")
         ]
     )
     pg.run()

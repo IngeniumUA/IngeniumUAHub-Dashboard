@@ -1,6 +1,7 @@
 from typing import Optional
 
 import streamlit as st
+from pydantic import TypeAdapter
 from streamlit.delta_generator import DeltaGenerator
 
 from app.page.cached_resources.clients import get_core_client
@@ -34,6 +35,9 @@ def core_health_check(streamlit_container: Optional[DeltaGenerator]):
         auth_check = core.auth_check()
         if streamlit_container:
             streamlit_container.markdown("#### Core auth Check")
-            streamlit_container.write(auth_check)
+            streamlit_container.write({
+                "status_code": auth_check["status_code"],
+                "response": TypeAdapter(dict).validate_json(auth_check["response"]).get("service_authentication"),
+            })
     except Exception as e:
         st.toast(f"Auth Check Failed: {e}")

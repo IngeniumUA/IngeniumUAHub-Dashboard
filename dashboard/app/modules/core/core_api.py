@@ -1,12 +1,23 @@
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, Any
 from httpx import Client, Response
 
 from keycloak import KeycloakOpenID
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, BaseModel, ConfigDict
 
 from app.settings import settings
 
+class HubExceptionDetail(BaseModel):
+    error_nl: str
+    error_en: str
+
+    # Allow other fields than the ones specified above
+    model_config = ConfigDict(
+        extra="allow",
+    )
+
+class HubException(BaseModel):
+    detail: HubExceptionDetail
 
 class CoreClient:  # todo rename to CoreAPI
     """
@@ -65,22 +76,30 @@ class CoreClient:  # todo rename to CoreAPI
         response: Response = client.get("/auth/check")
         return {"status_code": response.status_code, "response": response.text}
 
+    @classmethod
+    def handle_response(cls, response: Response, response_type: Any):
+        if response.status_code != 200:
+            response_type = HubException
+        if response.json():
+            return TypeAdapter(response_type).validate_json(response.content)
+        return []
+
     def query_transactions(
-        self, limit: int = 100, offset: int = 50, **kwargs
+        self, limit: int = 100, offset: int = 0, **kwargs
     ) -> list[dict]:
         query_param = dict(limit=limit, offset=offset)
         response = self.client.get("/api/v1/transaction", params=query_param)
         return TypeAdapter(list[dict]).validate_json(response.content)
 
     def query_hubcheckouttrackers(
-        self, limit: int = 100, offset: int = 50, **kwargs
+        self, limit: int = 100, offset: int = 0, **kwargs
     ) -> list[dict]:
         query_param = dict(limit=limit, offset=offset)
         response = self.client.get("/api/v1/checkout/tracker", params=query_param)
         return TypeAdapter(list[dict]).validate_json(response.content)
 
     def query_hubcheckouts(
-        self, limit: int = 100, offset: int = 50, **kwargs
+        self, limit: int = 100, offset: int = 0, **kwargs
     ) -> list[dict]:
         query_param = dict(limit=limit, offset=offset)
         response = self.client.get("/api/v1/checkout", params=query_param)
@@ -100,3 +119,19 @@ class CoreClient:  # todo rename to CoreAPI
         query_param = {}
         response = self.client.get("/api/v1/checkout/count", params=query_param)
         return TypeAdapter(int).validate_json(response.content)
+
+    def query_items(self,
+                    limit: int = 100,
+                    offset: int = 0,
+                    query_param: dict | None = None) -> list[dict]:
+        query_param = {
+            "limit": limit,
+            "offset": offset,
+            **query_param
+        }
+        response = self.client.get("/api/v1/item/wide", params=query_param)
+        return self.handle_response(response=response, response_type=list[dict])
+
+    def get_item_wide(self, item_identifier: str):
+        response = self.client.get(f"/api/v1/item/wide/{item_identifier}")
+        return self.handle_response(response=response, response_type=dict)
