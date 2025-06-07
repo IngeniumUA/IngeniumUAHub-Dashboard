@@ -8,11 +8,14 @@ from app.modules.data_manipulation.query_repository.checkout_queries import (
 from app.modules.data_manipulation.query_repository.checkout_tracker_queries import (
     get_checkout_tracker_count,
 )
+from app.modules.data_manipulation.query_repository.cloud_blob_queries import get_cloud_blob_count, get_cloud_blob_df
 from app.modules.data_manipulation.query_repository.transaction_queries import (
     get_transaction_count,
 )
 from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_exists
+from app.page.cached_resources.azure_connection import get_azure_connection
 from app.page.lib.core_heath_check import get_core_client
+from app.systems.ingestion.cloud_to_duckdb import CloudSyncManager
 from app.systems.ingestion.core_to_duckdb import (
     CoreSyncTransactionManager,
     CoreSyncCheckoutManager,
@@ -35,6 +38,7 @@ def duckdb_ingestion_analytics():
     tables = ("HubTransaction", "HubCheckout", "HubCheckoutTracker")
 
     with st.container(border=True):
+        st.header("Core")
         for table_name, col in zip(tables, st.columns(len(tables)), strict=False):
             with col.container(border=True):
                 st.markdown(f"#### {table_name}")
@@ -69,6 +73,8 @@ def duck_ingestion_page():
         CoreSyncCheckoutManager().sync_once(from_scratch=True)
     if st.session_state.get("ingest_hubcheckouttracker_sync_once", False):
         CoreSyncCheckoutTrackerManager().sync_once(from_scratch=True)
+    if st.session_state.get("ingest_cloudblob_sync_once", False):
+        CloudSyncManager().sync_once(from_scratch=True, query_blob_properties=True)
 
     # -----
     st.title("Data Ingestion")
@@ -120,3 +126,22 @@ def duck_ingestion_page():
             checkout_tracker_count = get_checkout_tracker_count()
             core_checkout_tracker_count = core.count_hubcheckouttrackers()
             st.write(f"{checkout_tracker_count} out of {core_checkout_tracker_count}")
+
+    with st.container(border=True):
+        st.header("Cloud Blobs")
+        st.caption("Cloud Blobs synced status")
+
+        is_table = table_exists(table_name="cloudblob")
+        in_table_txt = ":green[Yes]" if is_table else ":red[No]"
+        st.write(f"Present in database: {in_table_txt}")
+
+        if is_table:
+            cloud_client = get_azure_connection()
+            cloud_blob_count = CloudSyncManager.fetch_data_count(cloud_client=cloud_client)
+            cloud_duck_count = get_cloud_blob_count()
+            st.write(f"{cloud_duck_count} out of {cloud_blob_count}")
+
+        st.button("Sync once", key="ingest_cloudblob_sync_once")
+
+        if is_table:
+            st.dataframe(get_cloud_blob_df(limit=100))

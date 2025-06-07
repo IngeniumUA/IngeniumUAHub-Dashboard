@@ -26,6 +26,6 @@ def duckdb_table_summary() -> pl.DataFrame:
 
 
 def table_exists(
-    table_name: Literal["hubtransaction", "hubcheckout", "hubcheckouttracker"],
+    table_name: Literal["hubtransaction", "hubcheckout", "hubcheckouttracker", "cloudblob"],
 ) -> bool:
     return table_name in duckdb_table_summary()["table_name"].to_list()

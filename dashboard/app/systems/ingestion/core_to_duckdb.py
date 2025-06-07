@@ -74,7 +74,7 @@ class CoreSyncManager:
             )
             result = duck.execute(stmt, {"table_name": self.table_name}).fetchone()
             if result[0] > 0:  # If table exists (count > 0), drop it
-                duck.execute("DROP TABLE $table_name", {"table_name": self.table_name})
+                duck.execute(f"DROP TABLE {self.table_name}")
 
         # Register the Polars DataFrame, then create
         duck.register(f"temp_{self.table_name}_df", source_df)
