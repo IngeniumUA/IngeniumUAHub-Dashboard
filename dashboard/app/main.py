@@ -1,6 +1,7 @@
 import streamlit as st
 
 from app.page.lib.authentication import authenticate_user_component
+from app.page.routes.cloud_analytics_page import cloud_detail_page
 from app.page.routes.duck_ingestion_page import duck_ingestion_page
 from app.page.routes.item_pages.item_detail_page import item_detail_page
 from app.page.routes.item_pages.items_overview_page import items_overview_page
@@ -31,7 +32,8 @@ def run_main_app():
             st.Page(transaction_analytics_page),
             st.Page(order_tracking_analytics_page),
             st.Page(items_overview_page),
-            st.Page(page=item_detail_page, title="Item Detail")
+            st.Page(page=item_detail_page, title="Item Detail"),
+            st.Page(page=cloud_detail_page, title="Cloud Analytics"),
         ]
     )
     pg.run()

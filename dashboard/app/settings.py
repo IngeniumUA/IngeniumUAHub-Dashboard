@@ -69,6 +69,8 @@ class Settings(BaseModel):
     keycloak_client_secret: str
     keycloak_jwks_uri: str
 
+    azure_storage_key: str | None
+
     # Admin
     # Keycloak variables
     keycloak_server_url: str  # i.e. https://sso.ingeniumua.be
@@ -98,6 +100,7 @@ class Settings(BaseModel):
             commit_sha=os.getenv("COMMIT_SHA", None),
             umami_username=os.getenv("UMAMI_USERNAME", ""),
             umami_password=os.getenv("UMAMI_PASSWORD", ""),
+            azure_storage_key=os.getenv("AZURE_STORAGE_KEY", None)
         )
 
 
