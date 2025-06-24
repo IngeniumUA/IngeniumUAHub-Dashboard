@@ -2,7 +2,7 @@ import streamlit as st
 
 from app.page.lib.authentication import authenticate_user_component
 from app.page.routes.cloud_analytics_page import cloud_detail_page
-from app.page.routes.duck_ingestion_page import duck_ingestion_page
+from app.page.routes.data_sync_status_page import data_sync_status_page
 from app.page.routes.item_pages.item_detail_page import item_detail_page
 from app.page.routes.item_pages.items_overview_page import items_overview_page
 from app.page.routes.main_page import main_page
@@ -27,7 +27,7 @@ def run_main_app():
     pg = st.navigation(
         [
             st.Page(main_page),
-            st.Page(duck_ingestion_page),
+            st.Page(data_sync_status_page),
             st.Page(user_analytics),
             st.Page(transaction_analytics_page),
             st.Page(order_tracking_analytics_page),

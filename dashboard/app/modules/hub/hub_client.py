@@ -70,10 +70,10 @@ class HubClient:
         )
         return keycloak_openid.token(grant_type="client_credentials")
 
-    def health_check(self) -> dict:
+    def health_check(self) -> Response:
         client = self.client
         response: Response = client.get("")
-        return {"status_code": response.status_code, "response": response.text}
+        return response
 
     def auth_check(self) -> dict:
         client = self.client

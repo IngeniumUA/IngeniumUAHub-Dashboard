@@ -1,27 +1,11 @@
-import datetime
-
 import streamlit as st
-
-from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_exists
-from app.page.lib.core_heath_check import get_core_client
-
-
-@st.fragment(run_every=datetime.timedelta(seconds=5))
-def duck_db_status_fixture():
-    with st.container(border=True):
-        st.header("Duck Context")
-        st.caption("Running DuckDB statistics")
-        st.write(f"Updated {datetime.datetime.now(datetime.timezone.utc).time()}")
-
-        st.markdown("### Tables and their statistics")
-        st.dataframe(duckdb_table_summary())
-
 
 def duckdb_ingestion_analytics():
     tables = ("HubTransaction", "HubCheckout", "HubCheckoutTracker")
 
     with st.container(border=True):
         st.header("Core")
+        return
         for table_name, col in zip(tables, st.columns(len(tables)), strict=False):
             with col.container(border=True):
                 st.markdown(f"#### {table_name}")
@@ -44,8 +28,7 @@ def duckdb_ingestion_analytics():
                 st.button("Sync once", key=toggle_key + "_sync_once")
 
 
-def duck_ingestion_page():
-    core = get_core_client()
+def data_sync_status_page():
 
     # -----
     # Data ingestion

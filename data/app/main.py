@@ -67,6 +67,10 @@ app.add_middleware(
 #     return validation_intercept(request=request, exception=exc)
 
 
+@app.get("/")
+async def root():
+    return {"message": "Hey! Dit is onze API, jij bent verdwaald geraakt :)"}
+
 if __name__ == "__main__":
     reload = os.getenv("environment") == "local"  # If running in local environment, reload the server on changes
     try:
