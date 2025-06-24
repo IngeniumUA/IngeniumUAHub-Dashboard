@@ -14,6 +14,8 @@ jobs:
         - run: | 
             ruff format dashboard/app --config dashboard/pyproject.toml
             ruff check --fix --config dashboard/pyproject.toml
+            ruff format data/app --config data/pyproject.toml
+            ruff check --fix --config data/pyproject.toml
         - uses: stefanzweifel/git-auto-commit-action@v5
           with:
             commit_message: 'Automated style fixes by ruff'

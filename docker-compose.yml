@@ -26,6 +26,32 @@ services:
     networks:
       - ingeniumuahub_net
 
+  data_processing:
+    build:
+      context: data  # Only send this folder to Docker
+      dockerfile: DockerfileData
+    entrypoint: ["python", "app/main.py"]
+    tty: true  # Connect container's terminal to IDE terminal
+    restart: unless-stopped
+    environment:
+      environment: "local"
+      CORE_API_URL: ${CORE_API_URL}
+      AZURE_STORAGE_KEY: ${AZURE_STORAGE_KEY}
+      KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_JWKS_URI: ${KEYCLOAK_JWKS_URI}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+    volumes:
+      # Bind the local dashboard directory to /dashboard in the container
+      - ./data:/data
+      # Explicitly exclude the .venv directory to avoid conflicts
+      - /data/.venv
+    ports:
+      - "8000:8000"
+    networks:
+      - ingeniumuahub_net
+
 networks:
   ingeniumuahub_net:
     name: ingeniumuahub_net  # This creates the named network

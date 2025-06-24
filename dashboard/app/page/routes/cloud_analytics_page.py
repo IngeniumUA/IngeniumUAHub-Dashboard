@@ -1,15 +1,17 @@
 import streamlit as st
-from azure.storage.blob import ContainerClient
-
-from app.page.cached_resources.azure_connection import get_azure_connection
+from app.page.cached_resources.clients import get_data_client
 
 
 def cloud_detail_page():
     st.title('Cloud Analytics Page')
 
-    cloud_client: ContainerClient = get_azure_connection()
+    data_client = get_data_client()
 
-    st.subheader("Container properties")
-    st.write(dict(cloud_client.get_container_properties()))
+    st.subheader("Main container")
+    blob_count = data_client.get_azure_blob_count(container_name="ingenium-cloud")
+    st.write(f"Holds :blue[{blob_count}] file blobs in container")
 
-    # st.write(blob for blob in cloud_client.list_blob_names())
+
+    st.subheader("Review container")
+    blob_count = data_client.get_azure_blob_count(container_name="cloud-review")
+    st.write(f"Holds :blue[{blob_count}] file blobs in container")

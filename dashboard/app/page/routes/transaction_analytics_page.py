@@ -5,7 +5,7 @@ import polars as pl
 from plotly.subplots import make_subplots
 import plotly.graph_objects as pgo
 
-from app.modules.core.core_parsing import parse_transactions_to_df
+from app.modules.hub.core_parsing import parse_transactions_to_df
 from app.page.colors import HEX_COLORS
 from app.page.lib.core_heath_check import get_core_client
 

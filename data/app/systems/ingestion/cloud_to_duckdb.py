@@ -1,20 +1,21 @@
 import polars as pl
-from azure.storage.blob import ContainerClient, BlobProperties
-
-from app.page.cached_resources.azure_connection import get_azure_connection
-from app.page.cached_resources.duckdb_connection import duck_connection
+from azure.storage.blob import BlobProperties
+from azure.storage.blob.aio import ContainerClient
 
 
 class CloudSyncManager:
     @classmethod
-    def fetch_data_count(cls, cloud_client: ContainerClient) -> int:
-        return sum(1 for _ in cloud_client.list_blob_names())
+    async def fetch_data_count(cls, container_client: ContainerClient, name_starts_with: str = "") -> int:
+        count = 0
+        async for _ in container_client.list_blob_names(name_starts_with=name_starts_with):
+            count += 1
+        return count
 
     @classmethod
-    def fetch_data(cls, cloud_client: ContainerClient,
+    async def fetch_data(cls, container_client: ContainerClient,
                    **kwargs) -> list[dict]:
         properties = []
-        for blob in cloud_client.list_blobs():
+        async for blob in container_client.list_blobs():
             blob: BlobProperties
             properties.append({key: value for key, value in blob.items()})
         return properties
@@ -91,19 +92,18 @@ class CloudSyncManager:
         )
 
     @classmethod
-    def sync_once(cls,
-                 from_scratch: bool = False,
-                 query_blob_properties: bool = True):
-        duck = duck_connection()
-        cloud_client: ContainerClient = get_azure_connection()
+    async def sync_once(cls,
+                  container_client: ContainerClient,
+                  from_scratch: bool = False,
+                  query_blob_properties: bool = True):
 
         # -----
         # Fetch count
-        count_in_blob = cls.fetch_data_count(cloud_client=cloud_client)
+        count_in_blob = await cls.fetch_data_count(container_client=container_client)
 
         # ---
         # Fetch blobs
-        fetched_data: list[dict] = cls.fetch_data(cloud_client=cloud_client)
+        fetched_data: list[dict] = await cls.fetch_data(container_client=container_client)
 
         # ---
         # Parse to df
@@ -111,20 +111,20 @@ class CloudSyncManager:
 
         # -----
         # Load into DB
-        table = "cloudblob"
-        if from_scratch:
-            stmt = (
-                """SELECT COUNT(*) FROM duckdb_tables WHERE table_name = $table_name"""
-            )
-            result = duck.execute(stmt, {"table_name": table}).fetchone()
-            if result[0] > 0:  # If table exists (count > 0), drop it
-                duck.execute(f"""DROP TABLE {table}""")
-
-
-        # Register the Polars DataFrame, then create
-        duck.register(f"temp_{table}_df", source_df)
-        duck.execute(
-            f"CREATE TABLE {table} AS SELECT * FROM temp_{table}_df"
-        )
+        # table = "cloudblob"
+        # if from_scratch:
+        #     stmt = (
+        #         """SELECT COUNT(*) FROM duckdb_tables WHERE table_name = $table_name"""
+        #     )
+        #     result = duck.execute(stmt, {"table_name": table}).fetchone()
+        #     if result[0] > 0:  # If table exists (count > 0), drop it
+        #         duck.execute(f"""DROP TABLE {table}""")
+        #
+        #
+        # # Register the Polars DataFrame, then create
+        # duck.register(f"temp_{table}_df", source_df)
+        # duck.execute(
+        #     f"CREATE TABLE {table} AS SELECT * FROM temp_{table}_df"
+        # )
 
         return True

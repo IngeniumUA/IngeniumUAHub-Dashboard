@@ -1,0 +1,63 @@
+[project]
+name="Data"
+version="0.1.0"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "streamlit>=1.42.0",
+    "pydantic~=2.10.5",
+    "requests~=2.32.2", # Both requests and httpx (more performant) might not be needed
+    "polars[pyarrow]>=1.23.0",
+    "duckdb>=1.2.0",
+    "httpx==0.28.1",
+    "python-keycloak<=5.3.1",
+    "plotly==6.0.1",
+    "azure-storage-blob~=12.25.1",
+    "uvicorn>=0.34.0",
+    "fastapi~=0.115.6",
+    "aiohttp>=3.8.0",
+]
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+ignore_missing_imports = true
+namespace_packages = true
+mypy_path = "./app"
+
+[tool.isort]
+known_first_party = "app"
+
+# This is to make isort compatible with Black. See
+# https://black.readthedocs.io/en/stable/the_black_code_style.html#how-black-wraps-lines.
+line_length=120
+multi_line_output=3
+include_trailing_comma = true
+force_grid_wrap=0
+use_parentheses = true
+
+[tool.ruff]
+# General settings
+extend-exclude = ["data/test"]
+
+lint.select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    # "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+lint.ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+    "C408",  # dict used instead of {} -> this is not a performance critical application
+    "W291",  # Trailing whitespace -> Really just not worth fixing every time
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore when dict() is used instead of literal {}
+# dict() is slightly less performant because of the module import, but it is more verbose and so allow ONLY IN TESTS
+"data/test/*.py" = ["C408"]
