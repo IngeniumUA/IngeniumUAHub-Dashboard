@@ -2,6 +2,7 @@ import streamlit as st
 
 from app.modules.hub.core_client import CoreClient
 from app.modules.hub.data_client import DataClient
+from app.modules.hub.link_client import LinkClient
 from app.modules.hub.umami_client import UmamiClient
 from app.settings import settings
 
@@ -27,4 +28,11 @@ def get_umami_client() -> UmamiClient:
         password=settings.umami_password,
         base_url="https://traffic.ingeniumua.be",
         connection_timeout=3.0,
+    )
+
+@st.cache_resource
+def get_link_client() -> LinkClient:
+    connection_timeout = 30.0 if settings.is_debug() else 3.0
+    return LinkClient(
+        base_url="https://li.ingeniumua.be", connection_timeout=connection_timeout
     )

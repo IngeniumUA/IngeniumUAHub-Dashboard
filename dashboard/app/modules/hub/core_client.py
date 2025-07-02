@@ -3,6 +3,10 @@ from pydantic import TypeAdapter
 from app.modules.hub.hub_client import HubClient
 
 class CoreClient(HubClient):
+    def internal_summarised(self):
+        response = self.client.get("/api/v1/internal/summarised")
+        return TypeAdapter(dict[str, int]).validate_json(response.content)
+
     def query_transactions(
         self, limit: int = 100, offset: int = 0, **kwargs
     ) -> list[dict]:

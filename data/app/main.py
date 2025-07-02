@@ -71,6 +71,11 @@ app.add_middleware(
 async def root():
     return {"message": "Hey! Dit is onze API, jij bent verdwaald geraakt :)"}
 
+@app.get("/health")
+async def health_check():
+    return True
+
+
 if __name__ == "__main__":
     reload = os.getenv("environment") == "local"  # If running in local environment, reload the server on changes
     try:

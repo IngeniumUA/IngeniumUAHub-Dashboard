@@ -22,9 +22,6 @@ class HubException(BaseModel):
 
 class HubClient:
     """
-
-    """
-    """
     Meant for communication between the streamlit backend server and core application.
     Note it does not use any user authentication, but an API account.
     """
@@ -72,7 +69,7 @@ class HubClient:
 
     def health_check(self) -> Response:
         client = self.client
-        response: Response = client.get("")
+        response: Response = client.get("/health")
         return response
 
     def auth_check(self) -> dict:
