@@ -1,31 +1,21 @@
+import datetime
+
 import streamlit as st
 
-def duckdb_ingestion_analytics():
-    tables = ("HubTransaction", "HubCheckout", "HubCheckoutTracker")
+from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_counts
 
+
+@st.fragment(run_every=datetime.timedelta(seconds=5))
+def duck_db_status_fixture():
     with st.container(border=True):
-        st.header("Core")
-        return
-        for table_name, col in zip(tables, st.columns(len(tables)), strict=False):
-            with col.container(border=True):
-                st.markdown(f"#### {table_name}")
+        st.header("Duck Context")
+        st.caption("Running DuckDB statistics")
+        st.write(f"Updated {datetime.datetime.now(datetime.timezone.utc).time()}")
 
-                #
-                in_db = table_exists(table_name=table_name.lower())
-                in_db_txt = ":green[Yes]" if in_db else ":red[No]"
-                st.write(f"Present in database: {in_db_txt}")
+        st.markdown("### Tables and their statistics")
+        tables_df = duckdb_table_summary()
 
-                #
-                st.write("Automatic Sync")
-                toggle_key = f"ingest_{table_name.lower()}"
-                st.toggle(
-                    key=toggle_key,
-                    label="Enable auto sync",
-                    value=st.session_state.get(toggle_key, False),
-                )
-
-                #
-                st.button("Sync once", key=toggle_key + "_sync_once")
+        st.dataframe(tables_df.join(table_counts(tables_df["table_name"]), on="table_name"))
 
 
 def data_sync_status_page():
@@ -45,14 +35,15 @@ def data_sync_status_page():
     # -----
     st.title("Data Ingestion")
     st.caption(
-        "Continuous monitoring tool for loading data from different services into duckdb for analytics"
+        "Continuous monitoring tool for loading data from different services into duckdb for analytics."
+        "Streamlit will only load data into duckdb when the application is being used."
+        "The database is global for everyone"
     )
 
     # # DuckDB Statistics
-    # duck_db_status_fixture()
+    duck_db_status_fixture()
     #
-    # # Ingestion configuration
-    # duckdb_ingestion_analytics()  # General overview
+
     #
     # with st.container(border=True):
     #     st.header("HubTransaction")
