@@ -123,3 +123,28 @@ def parse_checkouttrackers_to_df(checkout_trackers: list[dict]) -> pl.DataFrame:
         .alias("last_update_timestamp"),
     )
     return adjusted_df
+
+def parse_dblogs_to_df(dblogs: list[dict]) -> pl.DataFrame:
+    base_df = pl.json_normalize(data=dblogs, max_level=1)
+
+    adjusted_df = base_df.select(
+        pl.col("log_id"),
+        pl.col("request_id"),
+        pl.col("table_name"),
+        pl.col("row_primary_key"),
+        pl.col("dblog_fields_edited.fields_edited").alias("fields_edited"),
+        pl.col("dblog_metadata.reason_for_edit").alias("reason_for_edit"),
+        pl.col("dblog_metadata.user").alias("user"),
+        pl.col("created_timestamp")
+        .str.to_datetime(format="%Y-%m-%dT%H:%M:%S%.fZ")
+        .alias("created_timestamp"),
+    )
+
+    return adjusted_df
+
+def parse_dblogs_to_fields_denormalized_df(dblogs: list[dict]) -> pl.DataFrame:
+    """
+    Denormalize on ALL fields edited
+    """
+    normalized_df = parse_dblogs_to_df(dblogs)
+    return normalized_df.explode("fields_edited").unnest("fields_edited")

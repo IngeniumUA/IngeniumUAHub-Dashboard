@@ -3,6 +3,7 @@ import streamlit as st
 from app.page.lib.authentication import authenticate_user_component
 from app.page.routes.cloud_analytics_page import cloud_detail_page
 from app.page.routes.data_sync_status_page import data_sync_status_page
+from app.page.routes.dblog_page import dblog_page
 from app.page.routes.item_pages.item_detail_page import item_detail_page
 from app.page.routes.item_pages.items_overview_page import items_overview_page
 from app.page.routes.main_page import main_page
@@ -33,7 +34,8 @@ def run_main_app():
                 st.Page(page=user_analytics, title="User analytics"),
                 st.Page(page=transaction_analytics_page, title="Transaction analytics"),
                 st.Page(page=order_tracking_analytics_page, title="Order Tracking analytics"),
-                st.Page(page=items_overview_page, title="Items Overview page")
+                st.Page(page=items_overview_page, title="Items Overview page"),
+                st.Page(page=dblog_page, title="DBLog Overview page"),
             ],
             "Pop-up Z": [],
             "One-off reports": [st.Page(page=popupz_orders_report_page, title="Popup Z Orders Report")],

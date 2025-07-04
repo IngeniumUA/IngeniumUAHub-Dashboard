@@ -50,7 +50,7 @@ class CoreClient(HubClient):
         query_param = {
             "limit": limit,
             "offset": offset,
-            **query_param
+            **(query_param if query_param else {})
         }
         response = self.client.get("/api/v1/item/wide", params=query_param)
         return self.handle_response(response=response, response_type=list[dict])
@@ -58,3 +58,15 @@ class CoreClient(HubClient):
     def get_item_wide(self, item_identifier: str):
         response = self.client.get(f"/api/v1/item/wide/{item_identifier}")
         return self.handle_response(response=response, response_type=dict)
+
+    def query_dblogs(self,
+                     limit: int = 100,
+                     offset: int = 0,
+                     query_param: dict | None = None) -> list[dict]:
+        query_param = {
+            "limit": limit,
+            "offset": offset,
+            **(query_param if query_param else {})
+        }
+        response = self.client.get("/api/v1/dblog", params=query_param)
+        return self.handle_response(response=response, response_type=list[dict])
