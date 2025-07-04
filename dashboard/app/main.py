@@ -1,6 +1,6 @@
 import streamlit as st
 
-from app.page.lib.authentication import authenticate_user_component
+from app.page.lib.authentication import authenticate_user_component, is_authenticated
 from app.page.routes.cloud_analytics_page import cloud_detail_page
 from app.page.routes.data_sync_status_page import data_sync_status_page
 from app.page.routes.dblog_page import dblog_page
@@ -11,6 +11,7 @@ from app.page.routes.ordertracking_analytics_page import order_tracking_analytic
 from app.page.routes.popupz.popupz_products_report import popupz_orders_report_page
 from app.page.routes.transaction_analytics_page import transaction_analytics_page
 from app.page.routes.user_analytics_page import user_analytics
+from app.settings import settings, EnvironmentEnum
 
 
 def run_main_app():
@@ -20,10 +21,13 @@ def run_main_app():
     # -----
     # Setup
     authenticate_user_component()  # Authentication on user-level
-    if "keycloak_token" not in st.session_state:
+    if not is_authenticated():
         st.warning("Not authenticated")
+        if settings.running_environment.value != EnvironmentEnum.local.value:
+            return
     else:
         st.success("Authenticated")
+    # st.write(st.session_state.get("keycloak_token", None))
 
     # -----
     # Pages
