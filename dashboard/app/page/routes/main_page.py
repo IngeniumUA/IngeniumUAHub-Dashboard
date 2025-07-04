@@ -1,37 +1,52 @@
 import streamlit as st
-from streamlit.delta_generator import DeltaGenerator
+from pandas import Timedelta
 
-from app.page.cached_resources.health_checks import core_health_check, data_health_check
+from app.page.cached_resources.health_checks import core_health_check, data_health_check, core_internal_check, \
+    link_health_check
 
 
-def health_checks_component(container: DeltaGenerator):
-    container.subheader("Service Health Checks")
-    container.markdown("### Hub Services")
+@st.fragment(run_every=Timedelta(seconds=5))
+def health_checks_component():
+    st.subheader("Service Health Checks")
+    st.markdown("### Hub Services")
 
-    core_col, data_col, link_col = container.columns(3)
-    traffic_col, keycloak_col, wiki_col = container.columns(3)
+    core_col, data_col, link_col = st.columns(3)
+    traffic_col, keycloak_col, wiki_col = st.columns(3)
 
     with core_col.container(border=True):
         st.markdown("#### Core API")
         health_check = core_health_check()
         if health_check["status"] == "Ok":
-            st.markdown("### :green[Healthy]")
+            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
         else:
-            st.markdown("### :red[Unhealthy]")
+            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
         st.caption(f"Response in {health_check["response_time"]} ms")
+
+        internal = core_internal_check()
+        event_loop_col, thread_pool_col = st.columns(2)
+        event_loop_col.write(f"Event loop: :blue[{internal["running_tasks"]}] tasks")
+
+        thread_pool_col.write(f"Using :blue[{internal["threads_in_use"]}] out of :blue[{internal["max_threads"]}] threads")
 
     with data_col.container(border=True):
         st.markdown("#### Data API")
         health_check = data_health_check()
 
         if health_check["status"] == "Ok":
-            st.markdown("### :green[Healthy]")
+            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
         else:
-            st.markdown("### :red[Unhealthy]")
+            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
         st.caption(f"Response in {health_check["response_time"]} ms")
 
     with link_col.container(border=True):
         st.markdown("#### Link Server")
+        health_check = link_health_check()
+
+        if health_check["status"] == "Ok":
+            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
+        else:
+            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
+        st.caption(f"Response in {health_check["response_time"]} ms")
 
     with traffic_col.container(border=True):
         st.markdown("#### Traffic")
@@ -48,8 +63,7 @@ def main_page():
 
     # -----
     # Display
-    health_checks = st.container(border=True)
-    health_checks_component(health_checks)
+    health_checks_component()
 
     # -----
     # Random things for debugging
