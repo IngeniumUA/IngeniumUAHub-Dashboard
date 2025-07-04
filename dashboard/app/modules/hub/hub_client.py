@@ -61,7 +61,7 @@ class HubClient:
     def _keycloak_access_token(cls):
         keycloak_openid = KeycloakOpenID(
             server_url=settings.keycloak_server_url,
-            client_id=settings.keycloak_client_id,
+            client_id=settings.keycloak_backend_client_id,
             realm_name=settings.keycloak_realm,
             client_secret_key=settings.keycloak_client_secret,
         )

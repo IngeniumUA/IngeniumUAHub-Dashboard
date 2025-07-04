@@ -49,10 +49,13 @@ class Settings(BaseModel):
     umami_username: str
     umami_password: str
 
-    # Public auth uri
-    keycloak_client_id: str
-    keycloak_client_secret: str
+    # Public auth
+    keycloak_frontend_client_id: str
     keycloak_jwks_uri: str
+
+    # Service auth
+    keycloak_backend_client_id: str
+    keycloak_client_secret: str
 
     azure_storage_key: str | None
 
@@ -78,7 +81,8 @@ class Settings(BaseModel):
             in [EnvironmentEnum.local.value, EnvironmentEnum.testing.value]
             else False,
             keycloak_jwks_uri=os.environ.get("KEYCLOAK_JWKS_URI"),
-            keycloak_client_id=os.getenv("KEYCLOAK_CLIENT_ID", ""),
+            keycloak_backend_client_id=os.getenv("KEYCLOAK_BACKEND_CLIENT_ID", ""),
+            keycloak_frontend_client_id=os.getenv("KEYCLOAK_FRONTEND_CLIENT_ID", ""),
             keycloak_client_secret=os.getenv("KEYCLOAK_CLIENT_SECRET", ""),
             keycloak_server_url=os.getenv("KEYCLOAK_SERVER_URL", ""),
             keycloak_realm=os.getenv("KEYCLOAK_REALM", ""),

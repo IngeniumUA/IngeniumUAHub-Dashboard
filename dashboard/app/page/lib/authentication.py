@@ -14,7 +14,7 @@ def authenticate_user_component():
         return
     auth_url = (
         f"{settings.keycloak_server_url}/realms/{settings.keycloak_realm}/protocol/openid-connect/auth"
-        f"?client_id={settings.keycloak_client_id}&response_type=code&redirect_uri={'http://localhost:4200'}"
+        f"?client_id={settings.keycloak_frontend_client_id}&response_type=code&redirect_uri={'http://localhost:4200'}"
     )
     st.markdown(f"[Click here to login]({auth_url})")
 
@@ -24,7 +24,7 @@ def authenticate_user_component():
         token_url = f"{settings.keycloak_server_url}/realms/{settings.keycloak_realm}/protocol/openid-connect/token"
 
         data = {
-            "client_id": settings.keycloak_client_id,
+            "client_id": settings.keycloak_frontend_client_id,
             "grant_type": "authorization_code",
             "code": code,
             "redirect_uri": "http://localhost:4200",

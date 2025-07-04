@@ -22,7 +22,8 @@ def run_main_app():
     authenticate_user_component()  # Authentication on user-level
     if "keycloak_token" not in st.session_state:
         st.warning("Not authenticated")
-        # return
+    else:
+        st.success("Authenticated")
 
     # -----
     # Pages
