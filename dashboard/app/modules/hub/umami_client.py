@@ -68,10 +68,11 @@ class UmamiClient:
             base_url=self.base_url, headers=headers, timeout=self.connection_timeout
         )
 
-    def health_check(self) -> dict:
-        client = self.client
-        response: Response = client.get("")
-        return {"status_code": response.status_code, "response": response.text}
+    def health_check(self) -> Response:
+        with Client(base_url=self.base_url, timeout=self.connection_timeout) as client:
+            return client.get(
+                "/api/heartbeat",
+            )
 
     def auth_check(self) -> dict:
         client = self.client

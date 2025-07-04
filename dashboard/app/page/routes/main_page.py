@@ -2,7 +2,7 @@ import streamlit as st
 from pandas import Timedelta
 
 from app.page.cached_resources.health_checks import core_health_check, data_health_check, core_internal_check, \
-    link_health_check
+    link_health_check, traffic_health_check
 from app.settings import settings
 
 
@@ -55,7 +55,14 @@ def health_checks_component():
 
     with traffic_col.container(border=True):
         st.markdown("#### Traffic")
-        st.caption("traffic.ingeniumua.be")
+        st.caption("https://traffic.ingeniumua.be")
+        health_check = traffic_health_check()
+
+        if health_check["status"] == "Ok":
+            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
+        else:
+            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
+        st.caption(f"Response in {health_check["response_time"]} ms")
 
     with keycloak_col.container(border=True):
         st.markdown("#### Keycloak")
