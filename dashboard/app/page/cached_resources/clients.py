@@ -18,7 +18,7 @@ def get_core_client():
 def get_data_client() -> DataClient:
     connection_timeout = 30.0 if settings.is_debug() else 3.0
     return DataClient(
-        base_url="http://ingeniumuahub-dashboard-data_processing-1:8000", connection_timeout=connection_timeout
+        base_url=settings.dpu_api_url, connection_timeout=connection_timeout
     )
 
 @st.cache_resource

@@ -41,8 +41,9 @@ class Settings(BaseModel):
 
     echo_sql: bool = True  # Print sql to terminal
 
-    # Core API url
+    # HUB API urls
     core_api_url: str
+    dpu_api_url: str
 
     # Umami
     umami_username: str
@@ -71,6 +72,7 @@ class Settings(BaseModel):
         return Settings(
             running_environment=(environment := set_environment()),
             core_api_url=os.environ.get("CORE_API_URL"),
+            dpu_api_url=os.environ.get("DPU_API_URL"),
             echo_sql=True
             if environment.value
             in [EnvironmentEnum.local.value, EnvironmentEnum.testing.value]
