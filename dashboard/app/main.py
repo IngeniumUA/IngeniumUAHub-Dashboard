@@ -1,6 +1,6 @@
 import streamlit as st
 
-from app.page.lib.authentication import authenticate_user_component, is_authenticated
+from app.page.lib.authentication import authenticate_user_component, is_authenticated, logout
 from app.page.routes.cloud_analytics_page import cloud_detail_page
 from app.page.routes.data_sync_status_page import data_sync_status_page
 from app.page.routes.dblog_page import dblog_page
@@ -26,7 +26,9 @@ def run_main_app():
         if settings.running_environment.value != EnvironmentEnum.local.value:
             return
     else:
-        st.success("Authenticated")
+        col1, col2 = st.columns(2)
+        col1.success("Authenticated")
+        col2.button("Log out", on_click=logout)
     # st.write(st.session_state.get("keycloak_token", None))
 
     # -----
