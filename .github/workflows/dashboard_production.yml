@@ -22,16 +22,12 @@ jobs:
           echo "ACR_LATEST=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdashboard:latest" >> $GITHUB_ENV
 
       - name: Log in to Azure
-        uses: azure/login@v1
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Log in to Azure Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.AZURE_CLIENT_ID }}
-          password: ${{ secrets.AZURE_CLIENT_SECRET }}
+      - name: Log in to Azure Container Registry via Azure CLI
+        run: az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}
 
       - name: Build and push image to ACR
         uses: docker/build-push-action@v2
