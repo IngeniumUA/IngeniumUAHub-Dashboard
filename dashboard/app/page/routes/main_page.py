@@ -18,51 +18,63 @@ def health_checks_component():
         st.markdown("#### Core API")
         st.caption(settings.core_api_url)
 
-        health_check = core_health_check()
-        if health_check["status"] == "Ok":
-            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
-        else:
-            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
-        st.caption(f"Response in {health_check["response_time"]} ms")
+        try:
+            health_check = core_health_check()
+            if health_check["status"] == "Ok":
+                st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
+            else:
+                st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
+            st.caption(f"Response in {health_check["response_time"]} ms")
 
-        internal = core_internal_check()
-        event_loop_col, thread_pool_col = st.columns(2)
-        event_loop_col.write(f"Event loop: :blue[{internal["running_tasks"]}] tasks")
+            internal = core_internal_check()
+            event_loop_col, thread_pool_col = st.columns(2)
+            event_loop_col.write(f"Event loop: :blue[{internal["running_tasks"]}] tasks")
 
-        thread_pool_col.write(f"Using :blue[{internal["threads_in_use"]}] out of :blue[{internal["max_threads"]}] threads")
+            thread_pool_col.write(f"Using :blue[{internal["threads_in_use"]}] out of :blue[{internal["max_threads"]}] threads")
+        except Exception as e:
+            st.error(e)
 
     with data_col.container(border=True):
         st.markdown("#### Data API")
         st.caption(settings.dpu_api_url)
-        health_check = data_health_check()
+        try:
+            health_check = data_health_check()
 
-        if health_check["status"] == "Ok":
-            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
-        else:
-            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
-        st.caption(f"Response in {health_check["response_time"]} ms")
+            if health_check["status"] == "Ok":
+                st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
+            else:
+                st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
+            st.caption(f"Response in {health_check["response_time"]} ms")
+        except Exception as e:
+            st.error(e)
 
     with link_col.container(border=True):
         st.markdown("#### Link Server")
         st.caption("https://li.ingeniumua.be")
-        health_check = link_health_check()
+        try:
+            health_check = link_health_check()
 
-        if health_check["status"] == "Ok":
-            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
-        else:
-            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
-        st.caption(f"Response in {health_check["response_time"]} ms")
+            if health_check["status"] == "Ok":
+                st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
+            else:
+                st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
+            st.caption(f"Response in {health_check["response_time"]} ms")
+        except Exception as e:
+            st.error(e)
 
     with traffic_col.container(border=True):
         st.markdown("#### Traffic")
         st.caption("https://traffic.ingeniumua.be")
-        health_check = traffic_health_check()
+        try:
+            health_check = traffic_health_check()
 
-        if health_check["status"] == "Ok":
-            st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
-        else:
-            st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
-        st.caption(f"Response in {health_check["response_time"]} ms")
+            if health_check["status"] == "Ok":
+                st.markdown(f"### :green[Healthy {health_check["status_code"]}]")
+            else:
+                st.markdown(f"### :red[Unhealthy {health_check["status_code"]}]")
+            st.caption(f"Response in {health_check["response_time"]} ms")
+        except Exception as e:
+            st.error(e)
 
     with keycloak_col.container(border=True):
         st.markdown("#### Keycloak")
