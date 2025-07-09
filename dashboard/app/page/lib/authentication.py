@@ -76,7 +76,7 @@ def authenticate_user_component():
             "client_id": settings.keycloak_frontend_client_id,
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": "http://localhost:4200",
+            "redirect_uri": settings.redirect_uri_url,
         }
 
         response: Response = post(token_url, data=data)
