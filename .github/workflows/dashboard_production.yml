@@ -22,7 +22,7 @@ jobs:
           echo "ACR_LATEST=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdashboard:latest" >> $GITHUB_ENV
 
       - name: Log in to Azure
-        uses: azure/login@v3
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -32,8 +32,8 @@ jobs:
       - name: Build and push image to ACR
         uses: docker/build-push-action@v2
         with:
-          context: goApp/app
-          file: goApp/app/Dockerfile
+          context: dashboard
+          file: dashboard/Dockerfile
           build-args: ENVIRONMENT=production
           push: true
           tags: |
