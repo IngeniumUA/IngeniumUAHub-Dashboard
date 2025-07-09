@@ -63,7 +63,7 @@ def authenticate_user_component():
     auth_url = (
         f"{settings.keycloak_server_url}/realms/{settings.keycloak_realm}/protocol/openid-connect/auth"
         f"?client_id={settings.keycloak_frontend_client_id}&response_type=code"
-        f"&redirect_uri=http://localhost:4200&scope=openid profile"
+        f"&redirect_uri={settings.redirect_uri_url}&scope=openid profile"
     )
     st.html(f"<a href='{auth_url}'>Click here to login</a>")
 

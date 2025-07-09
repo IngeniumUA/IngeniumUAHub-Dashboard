@@ -52,6 +52,7 @@ class Settings(BaseModel):
     # Public auth
     keycloak_frontend_client_id: str
     keycloak_jwks_uri: str
+    redirect_uri_url: str
 
     # Service auth
     keycloak_backend_client_id: str
@@ -84,6 +85,7 @@ class Settings(BaseModel):
             keycloak_backend_client_id=os.getenv("KEYCLOAK_BACKEND_CLIENT_ID", ""),
             keycloak_frontend_client_id=os.getenv("KEYCLOAK_FRONTEND_CLIENT_ID", ""),
             keycloak_client_secret=os.getenv("KEYCLOAK_CLIENT_SECRET", ""),
+            redirect_uri_url=os.getenv("REDIRECT_URI_URL"),
             keycloak_server_url=os.getenv("KEYCLOAK_SERVER_URL", ""),
             keycloak_realm=os.getenv("KEYCLOAK_REALM", ""),
             commit_sha=os.getenv("COMMIT_SHA", None),
