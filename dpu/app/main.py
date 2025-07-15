@@ -1,12 +1,31 @@
 import os
+from contextlib import asynccontextmanager
 
 import uvicorn
-from fastapi import FastAPI, Depends
-from fastapi.exceptions import RequestValidationError
+from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from app.settings import settings, EnvironmentEnum
 from app.api.base_routers import api_v1_router
+from app.settings import settings, EnvironmentEnum
+from app.systems.ingestion.dpu_storage.ingest_egress_lifespan import ingress_on_startup, egress_on_shutdown
+
+
+# -----
+# Lifespan manages code executed before startup and after shutdown
+# -----
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # When enabled we can fill the duckdb instance with a copy saved on azure blob storage
+    await ingress_on_startup()
+
+    # -----
+    # Yielding will start the fastapi application
+    yield
+    # After yielding, so a shutdown (or crash?) we arrive here
+    # -----
+
+    # We can connect to the azure blob storage for dpu and offload all duckdb files
+    await egress_on_shutdown()
 
 # -----
 # List of applied middleware

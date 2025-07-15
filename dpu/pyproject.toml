@@ -1,5 +1,5 @@
 [project]
-name="Data"
+name="dpu"
 version="0.1.0"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -39,7 +39,7 @@ use_parentheses = true
 
 [tool.ruff]
 # General settings
-extend-exclude = ["data/test"]
+extend-exclude = ["dpu/test"]
 
 lint.select = [
     "E",  # pycodestyle errors
@@ -60,4 +60,4 @@ lint.ignore = [
 [tool.ruff.lint.per-file-ignores]
 # Ignore when dict() is used instead of literal {}
 # dict() is slightly less performant because of the module import, but it is more verbose and so allow ONLY IN TESTS
-"data/test/*.py" = ["C408"]
+"dpu/test/*.py" = ["C408"]

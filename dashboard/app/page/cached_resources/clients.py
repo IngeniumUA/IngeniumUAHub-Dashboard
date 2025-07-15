@@ -14,7 +14,7 @@ def get_core_client():
         base_url=settings.core_api_url, connection_timeout=connection_timeout
     )
 
-@st.cache_resource
+# @st.cache_resource
 def get_data_client() -> DataClient:
     connection_timeout = 30.0 if settings.is_debug() else 3.0
     return DataClient(

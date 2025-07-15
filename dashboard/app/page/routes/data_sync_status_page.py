@@ -4,8 +4,31 @@ import streamlit as st
 
 from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_counts
 
+from app.page.cached_resources.clients import get_data_client
 
-@st.fragment(run_every=datetime.timedelta(seconds=5))
+@st.fragment()
+def dpu_db_status_fixture():
+    with st.container(border=True):
+        st.header("Duck Context")
+        st.caption("Running DuckDB statistics")
+        st.write(f"Updated {datetime.datetime.now(datetime.timezone.utc).time()}")
+        st.markdown("### DPU Tables and Data sources")
+
+        data_col, buttons_col = st.columns(2)
+        dpu_client = get_data_client()
+        tables_df = dpu_client.get_duckdb_content()
+        data_col.dataframe(tables_df)
+
+        buttons_col.caption("Core Data source")
+        for col in ["HubTransaction", "HubCheckout", "HubCheckoutTracker"]:
+            if buttons_col.button(label=col):
+                if dpu_client.launch_sync_event(col.lower()):
+                    st.toast(":green[Synced successfully]")
+                else:
+                    st.toast(":red[Failed to sync]")
+                st.rerun()
+
+@st.fragment()
 def duck_db_status_fixture():
     with st.container(border=True):
         st.header("Duck Context")
@@ -14,35 +37,23 @@ def duck_db_status_fixture():
 
         st.markdown("### Tables and their statistics")
         tables_df = duckdb_table_summary()
-
         st.dataframe(tables_df.join(table_counts(tables_df["table_name"]), on="table_name"))
 
 
 def data_sync_status_page():
-
-    # -----
-    # Data ingestion
-    # fixme this should be moved to a global component
-    if st.session_state.get("ingest_hubtransaction_sync_once", False):
-        ...
-    if st.session_state.get("ingest_hubcheckout_sync_once", False):
-        ...
-    if st.session_state.get("ingest_hubcheckouttracker_sync_once", False):
-        ...
-    if st.session_state.get("ingest_cloudblob_sync_once", False):
-        ...
-
     # -----
     st.title("Data Ingestion")
     st.caption(
         "Continuous monitoring tool for loading data from different services into duckdb for analytics."
-        "Streamlit will only load data into duckdb when the application is being used."
-        "The database is global for everyone"
+        "Streamlit will only load data into own duckdb when the application is being used."
+        "The database is global for everyone using this application"
     )
 
-    # # DuckDB Statistics
+    # Own DuckDB Statistics
     duck_db_status_fixture()
-    #
+
+    # DPU DuckDB Statistics
+    dpu_db_status_fixture()
 
     #
     # with st.container(border=True):

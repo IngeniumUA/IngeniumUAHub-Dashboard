@@ -6,7 +6,7 @@ LABEL authors="IngeniumUAHub"
 ENV enviroment=production
 
 # Working directory in docker
-WORKDIR /data
+WORKDIR /dpu
 
 # -- Installing uv --
 # The installer requires curl (and certificates) to download the release archive
@@ -24,17 +24,17 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
-COPY . /data
+COPY . /dpu
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 # Place executables in the environment at the front of the path
-ENV PATH="/data/.venv/bin:$PATH"
-ENV PYTHONPATH="/data"
+ENV PATH="/dpu/.venv/bin:$PATH"
+ENV PYTHONPATH="/dpu"
 
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
-# Run the Streamlit application
+# Run the fastapi app
 ENTRYPOINT ["uvicorn", "app.main:app", "--proxy-headers", "--host 0.0.0.0", "--port 8080"]

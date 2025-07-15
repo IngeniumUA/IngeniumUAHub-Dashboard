@@ -15,6 +15,7 @@ services:
       KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_JWKS_URI: ${KEYCLOAK_JWKS_URI}
+      REDIRECT_URI_URL: ${REDIRECT_URI_URL}
       KEYCLOAK_FRONTEND_CLIENT_ID: ${KEYCLOAK_FRONTEND_CLIENT_ID}
       KEYCLOAK_BACKEND_CLIENT_ID: ${KEYCLOAK_BACKEND_CLIENT_ID}
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
@@ -30,8 +31,8 @@ services:
 
   data_processing:
     build:
-      context: data  # Only send this folder to Docker
-      dockerfile: DockerfileData
+      context: dpu  # Only send this folder to Docker
+      dockerfile: Dockerfile
     entrypoint: ["python", "app/main.py"]
     tty: true  # Connect container's terminal to IDE terminal
     restart: unless-stopped
@@ -42,13 +43,13 @@ services:
       KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_JWKS_URI: ${KEYCLOAK_JWKS_URI}
-      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_BACKEND_CLIENT_ID}
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
     volumes:
       # Bind the local dashboard directory to /dashboard in the container
-      - ./data:/data
+      - ./dpu:/dpu
       # Explicitly exclude the .venv directory to avoid conflicts
-      - /data/.venv
+      - /dpu/.venv
     ports:
       - "8000:8000"
     networks:
@@ -57,3 +58,4 @@ services:
 networks:
   ingeniumuahub_net:
     name: ingeniumuahub_net  # This creates the named network
+    external: true
