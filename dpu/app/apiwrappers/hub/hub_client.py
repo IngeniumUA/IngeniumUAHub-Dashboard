@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Optional, Any
-from httpx import Client, Response
+from httpx import Response, AsyncClient
 
 from keycloak import KeycloakOpenID
 from pydantic import BaseModel, ConfigDict, TypeAdapter
@@ -35,6 +35,8 @@ class HubClient:
         self._keycloak_start: datetime | None = None
         self._keycloak_token: Optional[dict] = None
 
+        self._client: Optional[AsyncClient] = None
+
     @property
     def keycloak_token(self):
         if self._keycloak_token is None:
@@ -50,13 +52,13 @@ class HubClient:
         return self._keycloak_token
 
     @property
-    def client(self) -> Client:
-        headers = {
-            "Authorization": f"Bearer {self.keycloak_token['access_token']}",
-        }
-        return Client(
-            base_url=self.base_url, headers=headers, timeout=self.connection_timeout
-        )
+    def client(self) -> AsyncClient:
+        if self._client is None:
+            headers = {
+                "Authorization": f"Bearer {self.keycloak_token['access_token']}",
+            }
+            self._client = AsyncClient(base_url=self.base_url, headers=headers, timeout=self.connection_timeout)
+        return self._client
 
     @classmethod
     def _keycloak_access_token(cls):
@@ -68,18 +70,19 @@ class HubClient:
         )
         return keycloak_openid.token(grant_type="client_credentials")
 
-    def health_check(self) -> Response:
+    async def health_check(self) -> Response:
         client = self.client
-        response: Response = client.get("/health")
+        response: Response = await client.get("/health")
         return response
 
-    def auth_check(self) -> dict:
+    async def auth_check(self) -> dict:
         client = self.client
-        response: Response = client.get("/auth/check")
+        response: Response = await client.get("/auth/check")
         return {"status_code": response.status_code, "response": response.text}
 
     @classmethod
     def handle_response(cls, response: Response, response_type: Any):
+        print(response.content)
         if response.status_code != 200:
             response_type = HubExceptionResponse
         if response.json():

@@ -73,3 +73,23 @@ class HubException(HTTPException):
                 "error_nl": f"Resource {resource} met idenfitier {identifier} niet gevonden"
             }
         )
+
+    @classmethod
+    def invalid_argument(cls, argument: str) -> "HubException":
+        return HubException(
+            status_code=406,
+            detail={
+                "error_en": f"Argument {argument} is invalid",
+                "error_nl": f"Argument {argument} is niet geldig",
+            }
+        )
+
+    @classmethod
+    def already_syncing(cls, data_source, table_name) -> "HubException":
+        return HubException(
+            status_code=409,
+            detail={
+                "error_en": f"Sync already in progress for this {table_name} from {data_source}",
+                "error_nl": f"Sync is al bezig voor {table_name} komende van {data_source}"
+            }
+        )

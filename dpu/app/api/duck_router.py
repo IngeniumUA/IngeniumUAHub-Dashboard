@@ -1,9 +1,11 @@
 from fastapi import APIRouter
 import polars as pl
 
+from app.apiwrappers.hub.core_client import CoreClientDep
 from app.modules.duckdb.duck_general_query_repository import DuckGeneralRepository
 from app.modules.duckdb.duckdb_dep import DuckDBDep
 from app.modules.exception.hubexception import HubException
+from app.systems.ingestion.ingestion_interface import IngestionInterfaceDep
 
 duck_router = APIRouter(prefix="/sync", tags=["v1"])
 
@@ -23,19 +25,24 @@ async def get_data_count(data_table: str,
                          duck_connection: DuckDBDep):
     return DuckGeneralRepository.table_count(duck_connection=duck_connection, table=data_table).to_dict(as_series=False)
 
-@duck_router.post("/table/{data_table}/sync")
-async def sync_data(data_table: str) -> bool:
+@duck_router.post("/table/{table_data}/sync")
+async def sync_data(table_data: str,
+                    core_client: CoreClientDep,
+                    duck_connection: DuckDBDep,
+                    ingestion_interface: IngestionInterfaceDep
+                    ) -> bool:
     """
     Control API to launch a sync event
     """
-    if data_table in ["hubtransaction", "hubcheckout", "hubdblog", "hubcheckouttracker"]:
-        # Core Sync
-        ...
-    elif data_table in []:
-        # Umami sync
-        ...
+    if table_data in ["hubcheckout", "hubtransaction", "hubcheckouttracker", "hubdblog"]:
+        data_source = "core"
     else:
-        raise HubException.resource_not_found(resource="data_table", identifier=data_table)
+        raise HubException.invalid_argument(argument=table_data)
+
+    await ingestion_interface.ingest(core_client=core_client,
+                                     duck_connection=duck_connection,
+                                     data_source=data_source,
+                                     table_data=table_data)
     return True
 
 @duck_router.get("/fetch_duck")

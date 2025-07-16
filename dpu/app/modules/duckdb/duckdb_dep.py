@@ -4,7 +4,13 @@ from fastapi import Depends
 
 
 async def duckdb_connection():
-    return duckdb.connect(database=':memory:', read_only=False)
+    # Configuration options
+    # https://duckdb.org/docs/stable/configuration/overview.html#configuration-reference
+    config = {}
+
+    return duckdb.connect(database='duck.duckdb',
+                          read_only=False,
+                          config=config)
 
 
 DuckDBDep = Annotated[duckdb.DuckDBPyConnection, Depends(duckdb_connection)]
