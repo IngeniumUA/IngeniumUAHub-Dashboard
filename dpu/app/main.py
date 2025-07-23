@@ -63,7 +63,6 @@ app = FastAPI(title="IngeniumUAHub Data API",
               contact={"email": "info@ingeniumua.be"},
               licence_info={"MIT License Copyright (c) 2023 IngeniumUA VZW"},
               middleware=middleware,
-              dependencies=[]
               )
 app.include_router(api_v1_router)
 # app.include_router(static_pages_router)
