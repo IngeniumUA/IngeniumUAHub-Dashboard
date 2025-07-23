@@ -43,7 +43,7 @@ class DuckGeneralRepository:
         tables_df: pl.DataFrame = cls.duckdb_table_summary(duck_connection)
         counts_df: pl.DataFrame =  cls.table_counts(duck_connection, tables_df["table_name"])
 
-        if not counts_df.is_empty():
+        if not counts_df:
             tables_df = tables_df.join(
                 counts_df, on="table_name", how="left"
             )
