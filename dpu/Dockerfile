@@ -37,4 +37,5 @@ ENV PYTHONPATH="/dpu"
 ENTRYPOINT []
 
 # Run the fastapi app
-ENTRYPOINT ["uvicorn", "app.main:app", "--proxy-headers", "--host 0.0.0.0", "--port 8080"]
+# Proxy headers are used for load balancing on azure
+ENTRYPOINT ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]
