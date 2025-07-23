@@ -37,7 +37,10 @@ def duck_db_status_fixture():
 
         st.markdown("### Tables and their statistics")
         tables_df = duckdb_table_summary()
-        st.dataframe(tables_df.join(table_counts(tables_df["table_name"]), on="table_name"))
+        counts_table = table_counts(tables_df["table_name"])
+        if counts_table:
+            tables_df.join(counts_table, on = "table_name")
+        st.dataframe(tables_df)
 
 
 def data_sync_status_page():
