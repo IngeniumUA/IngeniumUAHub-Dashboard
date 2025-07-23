@@ -43,9 +43,9 @@ jobs:
             ${{ env.ACR_IMAGE }}
             ${{ env.ACR_LATEST }}
 
-      # - name: Deploy to Azure Container App from ACR
-        # uses: azure/container-apps-deploy-action@v1
-        # with:
-          # containerAppName: ${{ vars.AZURE_CONTAINER_APP_DPU_NAME }}
-          # resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
-          # imageToDeploy: ${{ env.ACR_IMAGE }}
+      - name: Deploy to Azure Container App from ACR
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          containerAppName: ${{ vars.AZURE_CONTAINER_APP_DPU_NAME }}
+          resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
+          imageToDeploy: ${{ env.ACR_IMAGE }}
