@@ -18,9 +18,9 @@ jobs:
       - name: Set image tags and registry
         run: |
           echo "ACR_LOGIN_SERVER=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io" >> $GITHUB_ENV
-          echo "IMAGE_NAME=ingeniumuahubdashboard" >> $GITHUB_ENV
-          echo "ACR_IMAGE=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdashboard:${{ github.sha }}" >> $GITHUB_ENV
-          echo "ACR_LATEST=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdashboard:latest" >> $GITHUB_ENV
+          echo "IMAGE_NAME=ingeniumuahubdpu" >> $GITHUB_ENV
+          echo "ACR_IMAGE=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdpu:${{ github.sha }}" >> $GITHUB_ENV
+          echo "ACR_LATEST=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdpu:latest" >> $GITHUB_ENV
 
       - name: Azure Login
         uses: azure/login@v1
@@ -35,8 +35,8 @@ jobs:
       - name: Build and push image to ACR
         uses: docker/build-push-action@v2
         with:
-          context: dashboard
-          file: dashboard/Dockerfile
+          context: dpu
+          file: dpu/Dockerfile
           build-args: ENVIRONMENT=production
           push: true
           tags: |
@@ -46,6 +46,6 @@ jobs:
       - name: Deploy to Azure Container App from ACR
         uses: azure/container-apps-deploy-action@v1
         with:
-          containerAppName: ${{ vars.AZURE_CONTAINER_APP_DASHBOARD_NAME }}
+          containerAppName: ${{ vars.AZURE_CONTAINER_APP_DPU_NAME }}
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
           imageToDeploy: ${{ env.ACR_IMAGE }}
