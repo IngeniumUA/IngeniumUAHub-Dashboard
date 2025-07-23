@@ -2,6 +2,7 @@ import os
 from contextlib import asynccontextmanager
 
 import uvicorn
+import sentry_sdk
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
@@ -9,6 +10,38 @@ from app.api.base_routers import api_v1_router
 from app.settings import settings, EnvironmentEnum
 from app.systems.ingestion.dpu_storage.ingest_egress_lifespan import ingress_on_startup, egress_on_shutdown
 
+# FastAPI integration will be enabled automatically when you initialize the Sentry SDK.
+# Initialize the Sentry SDK before your app has been initialized:
+sentry_sdk.init(
+    dsn="https://dabd92a0a4e0e70bc65bfbd4c1d44d66@o4507006131437568.ingest.us.sentry.io/4509716874854400",
+
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+
+    # Passing environment as to differentiate between local, staging and production bugs
+    environment=settings.running_environment.name,
+
+    # Session_tracking tracks the full 'journey' of a request-response
+    auto_session_tracking=True,
+
+    # Which release
+    release=settings.commit_sha,
+)
+
+# Disabled when testing or in dev
+if settings.is_debug():
+    # https://github.com/getsentry/sentry-python/issues/660
+    sentry_sdk.init()
 
 # -----
 # Lifespan manages code executed before startup and after shutdown
