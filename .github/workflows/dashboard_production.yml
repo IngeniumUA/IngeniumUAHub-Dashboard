@@ -21,10 +21,12 @@ jobs:
           echo "ACR_IMAGE=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdashboard:${{ github.sha }}" >> $GITHUB_ENV
           echo "ACR_LATEST=${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/ingeniumuahubdashboard:latest" >> $GITHUB_ENV
 
-      - name: Log in to Azure
-        uses: azure/login@v2
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Log in to Azure Container Registry via Azure CLI
         run: az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}
@@ -43,6 +45,6 @@ jobs:
       - name: Deploy to Azure Container App from ACR
         uses: azure/container-apps-deploy-action@v1
         with:
-          containerAppName: ${{ vars.AZURE_CONTAINER_APP_NAME }}
+          containerAppName: ${{ vars.AZURE_CONTAINER_APP_DASHBOARD_NAME }}
           resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
           imageToDeploy: ${{ env.ACR_IMAGE }}
