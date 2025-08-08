@@ -1,4 +1,6 @@
 import streamlit as st
+from tornado.web import RequestHandler
+from streamlit.web.server import Server
 
 from app.page.lib.authentication import authenticate_user_component, is_authenticated, logout
 from app.page.routes.cloud_analytics_page import cloud_detail_page
@@ -14,12 +16,73 @@ from app.page.routes.user_analytics_page import user_analytics
 from app.settings import settings, EnvironmentEnum
 
 
+class SetTokenHandler(RequestHandler):
+    def post(self):
+        import json
+        from datetime import datetime
+        from app.page.cached_resources.keycloak_jwt import get_keycloak_jwt
+
+        def save_received_token(token: dict) -> bool:
+            if not all(k in token for k in ["expires_in", "access_token"]):
+                st.session_state.keycloak_token = None
+                st.session_state.keycloak_created = datetime.now()
+                st.session_state.keycloak_user = None
+                return False
+            decoded = get_keycloak_jwt().validate_token(token["access_token"])
+            st.session_state.keycloak_token = token
+            st.session_state.keycloak_created = datetime.now()
+            st.session_state.keycloak_user = decoded
+            return True
+
+        try:
+            token_dict = json.loads(self.request.body)
+            if save_received_token(token_dict):
+                self.set_status(200)
+                self.finish("OK")
+            else:
+                self.set_status(400)
+                self.finish("Invalid token")
+        except Exception as e:
+            self.set_status(500)
+            self.finish(str(e))
+
+@st.cache_resource
+def register_set_token_handler():
+    server = Server.get_current()
+    if server:
+        app = server._http_app
+        app.add_handlers(r".*", [(r"/set-token", SetTokenHandler)])
+
 def run_main_app():
     # Top pages configuration
     st.set_page_config(layout="wide")
 
     # -----
     # Setup
+    st.markdown("""
+    <script>
+    window.addEventListener("message", (event) => {
+        if (event.origin !== "https://main.yourdomain.com") return; // SECURITY CHECK
+
+        if (event.data.type === "auth") {
+            fetch("/set-token", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(event.data.token)
+            }).then(res => {
+                if (res.ok) {
+                    console.log("✅ Token stored in session_state");
+                    // Optionally tell Python to re-run
+                    window.parent.postMessage({ type: "token-set" }, event.origin);
+                } else {
+                    console.error("❌ Failed to set token");
+                }
+            }).catch(err => console.error(err));
+        }
+    });
+    </script>
+    """, unsafe_allow_html=True)
+
     authenticate_user_component()  # Authentication on user-level
     if not is_authenticated():
         st.warning("Not authenticated")
