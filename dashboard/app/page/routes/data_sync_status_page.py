@@ -39,7 +39,7 @@ def duck_db_status_fixture():
         st.markdown("### Tables and their statistics")
         tables_df = duckdb_table_summary()
         counts_table: pl.DataFrame = table_counts(tables_df["table_name"])
-        if not counts_table.is_empty():
+        if (counts_table is not None) and (not counts_table.is_empty()):
             tables_df.join(counts_table, on = "table_name")
         st.dataframe(tables_df)
 
