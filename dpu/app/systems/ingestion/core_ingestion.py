@@ -14,8 +14,8 @@ class CoreSyncManager:
         core_client: CoreClient,
         duck_connection: DuckDBPyConnection,
         table_name: str,
-        allowed_total_requests: int = 10,
-        max_objects_per_request: int = 100,
+        allowed_total_requests: int = 200,
+        max_objects_per_request: int = 500,
     ):
         self.core_client = core_client
         self.duck_connection = duck_connection

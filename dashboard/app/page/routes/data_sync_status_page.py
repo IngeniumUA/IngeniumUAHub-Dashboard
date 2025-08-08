@@ -1,5 +1,6 @@
 import datetime
 
+import polars as pl
 import streamlit as st
 
 from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_counts
@@ -37,8 +38,8 @@ def duck_db_status_fixture():
 
         st.markdown("### Tables and their statistics")
         tables_df = duckdb_table_summary()
-        counts_table = table_counts(tables_df["table_name"])
-        if counts_table:
+        counts_table: pl.DataFrame = table_counts(tables_df["table_name"])
+        if not counts_table.is_empty():
             tables_df.join(counts_table, on = "table_name")
         st.dataframe(tables_df)
 
