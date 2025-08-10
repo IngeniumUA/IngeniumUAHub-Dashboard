@@ -43,6 +43,11 @@ class CoreClient(HubClient):
         response = self.client.get("/api/v1/checkout/count", params=query_param)
         return TypeAdapter(int).validate_json(response.content)
 
+    def count_hubdblogs(self, **kwargs) -> int:
+        query_param = {}
+        response = self.client.get("/api/v1/dblog/count", params=query_param)
+        return TypeAdapter(int).validate_json(response.content)
+
     def query_items(self,
                     limit: int = 100,
                     offset: int = 0,

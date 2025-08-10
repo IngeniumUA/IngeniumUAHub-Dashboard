@@ -5,12 +5,37 @@ import streamlit as st
 
 from app.modules.duckdb.duckdb_tables import duckdb_table_summary, table_counts
 
-from app.page.cached_resources.clients import get_data_client
+from app.page.cached_resources.clients import get_data_client, get_core_client
+from app.modules.hub.core_client import CoreClient
+
+
+@st.fragment()
+def core_db_status_fixture():
+    with st.container(border=True):
+        st.header("Core Context")
+        st.caption("Running statistics (queried directly)")
+        st.write(f"Updated {datetime.datetime.now(datetime.timezone.utc).time()}")
+        st.markdown("### Core Tables and Data sources")
+
+        core_client: CoreClient = get_core_client()
+
+        # For Core, we need to perform a couple queries, there is no neat gathering function
+        # There is no need for adding that endpoint either as this is the DPU's job
+        try:
+            n = core_client.count_hubdblogs()
+        except:
+            n = 0
+        count_data = {
+            "hubtransactions": core_client.count_transactions(),
+            "hubcheckouts": core_client.count_hubcheckouts(),
+            "hubdblogs (condensed)": n
+        }
+        st.write(pl.DataFrame(count_data))
 
 @st.fragment()
 def dpu_db_status_fixture():
     with st.container(border=True):
-        st.header("Duck Context")
+        st.header("DPU Context")
         st.caption("Running DuckDB statistics")
         st.write(f"Updated {datetime.datetime.now(datetime.timezone.utc).time()}")
         st.markdown("### DPU Tables and Data sources")
@@ -58,6 +83,9 @@ def data_sync_status_page():
 
     # DPU DuckDB Statistics
     dpu_db_status_fixture()
+
+    # Core Postgres Statistics
+    core_db_status_fixture()
 
     #
     # with st.container(border=True):
