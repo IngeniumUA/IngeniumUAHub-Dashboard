@@ -14,7 +14,7 @@ def lidkaarten_overview_old_page():
             st.write(i)
             try:
                 response = core_client.client.get(f"api/v1/item/wide/card?limit=50&offset={i*50}")
-                response_list = TypeAdapter(list[dict]).validate_json(response.json())
+                response_list = TypeAdapter(list[dict]).validate_python(response.json())
                 gathered_response.extend(response_list)
             except Exception as e:
                 st.error(e)
