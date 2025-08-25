@@ -106,6 +106,7 @@ def run_main_app():
                 st.Page(page=order_tracking_analytics_page, title="Order Tracking analytics"),
                 st.Page(page=items_overview_page, title="Items Overview page"),
                 st.Page(page=dblog_page, title="DBLog Overview page"),
+                st.Page(page=items_overview_page, title="Lidkaarten Old page")
             ],
             "Pop-up Z": [],
             "One-off reports": [st.Page(page=popupz_orders_report_page, title="Popup Z Orders Report")],
