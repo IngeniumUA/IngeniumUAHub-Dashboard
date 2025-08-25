@@ -8,6 +8,7 @@ from app.page.routes.data_sync_status_page import data_sync_status_page
 from app.page.routes.dblog_page import dblog_page
 from app.page.routes.item_pages.item_detail_page import item_detail_page
 from app.page.routes.item_pages.items_overview_page import items_overview_page
+from app.page.routes.lidkaarten_old_page import lidkaarten_overview_old_page
 from app.page.routes.main_page import main_page
 from app.page.routes.ordertracking_analytics_page import order_tracking_analytics_page
 from app.page.routes.popupz.popupz_products_report import popupz_orders_report_page
@@ -106,7 +107,7 @@ def run_main_app():
                 st.Page(page=order_tracking_analytics_page, title="Order Tracking analytics"),
                 st.Page(page=items_overview_page, title="Items Overview page"),
                 st.Page(page=dblog_page, title="DBLog Overview page"),
-                st.Page(page=items_overview_page, title="Lidkaarten Old page")
+                st.Page(page=lidkaarten_overview_old_page, title="Lidkaarten Old page")
             ],
             "Pop-up Z": [],
             "One-off reports": [st.Page(page=popupz_orders_report_page, title="Popup Z Orders Report")],

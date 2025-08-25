@@ -3,7 +3,7 @@ import polars as pl
 
 from app.page.cached_resources.clients import get_core_client
 
-def items_overview_page():
+def lidkaarten_overview_old_page():
     st.title('Lidkaarten')
 
     core_client = get_core_client()
