@@ -9,7 +9,7 @@ def lidkaarten_overview_old_page():
 
     core_client = get_core_client()
     gathered_response = []
-    with st.progress():
+    with st.status("Loading .."):
         for i in range(0, 700//50):
             st.write(i)
             try:
